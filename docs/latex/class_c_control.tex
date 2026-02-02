@@ -1,0 +1,170 @@
+\doxysection{CControl Class Reference}
+\hypertarget{class_c_control}{}\label{class_c_control}\index{CControl@{CControl}}
+
+
+A class to interface with the TI Microcontroller via \doxylink{class_serial}{Serial} communication.  
+
+
+
+
+{\ttfamily \+\#include $<$CControl.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_control_a6498500ff403327b5770a3acebed1d93}\label{class_c_control_a6498500ff403327b5770a3acebed1d93} 
+{\bfseries CControl} ()
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_control_ab2ae420ef75b010c0c9078e597781105}\label{class_c_control_ab2ae420ef75b010c0c9078e597781105} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+CControl} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_c_control_a3d1384d0e1ee2a4a478a798b46457468}{init\+\_\+com}} (int comport)
+\begin{DoxyCompactList}\small\item\em Initializes the serial port. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_c_control_a0bad8e51e54cb6f1e2a7b51d3a3940d3}{get\+\_\+data}} (int type, int channel, int \&result)
+\begin{DoxyCompactList}\small\item\em Sends a GET command to the microcontroller. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_c_control_a13f557815616ef66a8f5dd4b725d8c32}{set\+\_\+data}} (int type, int channel, int val)
+\begin{DoxyCompactList}\small\item\em Sends a SET command to the microcontroller. \end{DoxyCompactList}\item 
+float \doxymbox{\hyperlink{class_c_control_ad81764ddc35d727dd2602b07e69c2299}{get\+\_\+analog}} (int channel)
+\begin{DoxyCompactList}\small\item\em Helper to get analog value as a percentage. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{class_c_control_a6fd3e7eb95975a6d6b2c33e0b821a325}{get\+\_\+button}} (int channel)
+\begin{DoxyCompactList}\small\item\em Helper to read a button with a 1-\/second debounce timeout. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_c_control_a59c5573003c6d29e0227ec23f208aa56}{auto\+\_\+init}} ()
+\begin{DoxyCompactList}\small\item\em Helper to auto-\/detect the correct serial port. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_control_aef87fbcfdcd323b1fdcf41be993e006c}\label{class_c_control_aef87fbcfdcd323b1fdcf41be993e006c} 
+\doxymbox{\hyperlink{class_serial}{Serial}} {\bfseries \+\_\+com}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_serial}{Serial} port object for communication. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class to interface with the TI Microcontroller via \doxylink{class_serial}{Serial} communication. 
+
+This class provides methods to read and write digital, analog, and servo data using a specific serial protocol. \begin{DoxyAuthor}{Author}
+Farhan Sadiq 
+\end{DoxyAuthor}
+
+
+\label{doc-func-members}
+\Hypertarget{class_c_control_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_c_control_a59c5573003c6d29e0227ec23f208aa56}\index{CControl@{CControl}!auto\_init@{auto\_init}}
+\index{auto\_init@{auto\_init}!CControl@{CControl}}
+\doxysubsubsection{\texorpdfstring{auto\_init()}{auto\_init()}}
+{\footnotesize\ttfamily \label{class_c_control_a59c5573003c6d29e0227ec23f208aa56} 
+bool CControl::\+auto\+\_\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Helper to auto-\/detect the correct serial port. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em void} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the microcontroller was able to connect, false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{class_c_control_ad81764ddc35d727dd2602b07e69c2299}\index{CControl@{CControl}!get\_analog@{get\_analog}}
+\index{get\_analog@{get\_analog}!CControl@{CControl}}
+\doxysubsubsection{\texorpdfstring{get\_analog()}{get\_analog()}}
+{\footnotesize\ttfamily \label{class_c_control_ad81764ddc35d727dd2602b07e69c2299} 
+float CControl::\+get\+\_\+analog (\begin{DoxyParamCaption}\item[{int}]{channel}{}\end{DoxyParamCaption})}
+
+
+
+Helper to get analog value as a percentage. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em channel} & The analog channel to read. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value as a percentage (0.\+0 to 100.\+0). 
+\end{DoxyReturn}
+\Hypertarget{class_c_control_a6fd3e7eb95975a6d6b2c33e0b821a325}\index{CControl@{CControl}!get\_button@{get\_button}}
+\index{get\_button@{get\_button}!CControl@{CControl}}
+\doxysubsubsection{\texorpdfstring{get\_button()}{get\_button()}}
+{\footnotesize\ttfamily \label{class_c_control_a6fd3e7eb95975a6d6b2c33e0b821a325} 
+int CControl::\+get\+\_\+button (\begin{DoxyParamCaption}\item[{int}]{channel}{}\end{DoxyParamCaption})}
+
+
+
+Helper to read a button with a 1-\/second debounce timeout. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em channel} & The digital channel to read. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the button was pressed (after debouncing), false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{class_c_control_a0bad8e51e54cb6f1e2a7b51d3a3940d3}\index{CControl@{CControl}!get\_data@{get\_data}}
+\index{get\_data@{get\_data}!CControl@{CControl}}
+\doxysubsubsection{\texorpdfstring{get\_data()}{get\_data()}}
+{\footnotesize\ttfamily \label{class_c_control_a0bad8e51e54cb6f1e2a7b51d3a3940d3} 
+bool CControl::\+get\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{type}{, }\item[{int}]{channel}{, }\item[{int \&}]{result}{}\end{DoxyParamCaption})}
+
+
+
+Sends a GET command to the microcontroller. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & The type of data (DIGITAL, ANALOG). \\
+\hline
+{\em channel} & The pin/\+channel number. \\
+\hline
+{\em result} & Reference to store the returned value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if successful, false if timed out or failed. 
+\end{DoxyReturn}
+\Hypertarget{class_c_control_a3d1384d0e1ee2a4a478a798b46457468}\index{CControl@{CControl}!init\_com@{init\_com}}
+\index{init\_com@{init\_com}!CControl@{CControl}}
+\doxysubsubsection{\texorpdfstring{init\_com()}{init\_com()}}
+{\footnotesize\ttfamily \label{class_c_control_a3d1384d0e1ee2a4a478a798b46457468} 
+void CControl::\+init\+\_\+com (\begin{DoxyParamCaption}\item[{int}]{comport}{}\end{DoxyParamCaption})}
+
+
+
+Initializes the serial port. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em comport} & The COM port number (e.\+g., 3 for COM3). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_c_control_a13f557815616ef66a8f5dd4b725d8c32}\index{CControl@{CControl}!set\_data@{set\_data}}
+\index{set\_data@{set\_data}!CControl@{CControl}}
+\doxysubsubsection{\texorpdfstring{set\_data()}{set\_data()}}
+{\footnotesize\ttfamily \label{class_c_control_a13f557815616ef66a8f5dd4b725d8c32} 
+bool CControl::\+set\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{type}{, }\item[{int}]{channel}{, }\item[{int}]{val}{}\end{DoxyParamCaption})}
+
+
+
+Sends a SET command to the microcontroller. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & The type of data (DIGITAL, ANALOG, SERVO). \\
+\hline
+{\em channel} & The pin/\+channel number. \\
+\hline
+{\em val} & The value to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if successful, false if failed. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+CControl.\+h\item 
+CControl.\+cpp\end{DoxyCompactItemize}

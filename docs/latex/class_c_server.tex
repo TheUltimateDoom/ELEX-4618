@@ -1,0 +1,56 @@
+\doxysection{CServer Class Reference}
+\hypertarget{class_c_server}{}\label{class_c_server}\index{CServer@{CServer}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_server_a6ce19d7a0606741610028a065ddddc57}\label{class_c_server_a6ce19d7a0606741610028a065ddddc57} 
+void {\bfseries start} (int port)
+\item 
+\Hypertarget{class_c_server_a31f0e23f00b4e506ab38bff799796358}\label{class_c_server_a31f0e23f00b4e506ab38bff799796358} 
+void {\bfseries stop} ()
+\item 
+\Hypertarget{class_c_server_a169fd953001f33e59cf0175cea094c5a}\label{class_c_server_a169fd953001f33e59cf0175cea094c5a} 
+void {\bfseries set\+\_\+txim} (cv::\+\+Mat \&im)
+\item 
+\Hypertarget{class_c_server_affba2b34f1f175a9850fa2af53d5b56a}\label{class_c_server_affba2b34f1f175a9850fa2af53d5b56a} 
+void {\bfseries get\+\_\+cmd} (std::\+vector$<$ std::\+string $>$ \&cmds)
+\item 
+\Hypertarget{class_c_server_a48f94d62c951cc3f92ecc1507507980f}\label{class_c_server_a48f94d62c951cc3f92ecc1507507980f} 
+void {\bfseries send\+\_\+string} (std::\+string send\+\_\+str)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_server_ab9ab8a857c7ac985c528d38cf2201b93}\label{class_c_server_ab9ab8a857c7ac985c528d38cf2201b93} 
+bool {\bfseries setblocking} (int fd, bool blocking)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_server_ad0463f08401dc2a905027aac18f77a7d}\label{class_c_server_ad0463f08401dc2a905027aac18f77a7d} 
+bool {\bfseries \+\_\+server\+\_\+exit}
+\item 
+\Hypertarget{class_c_server_ae751145e543be16e7b42a3a66774ae95}\label{class_c_server_ae751145e543be16e7b42a3a66774ae95} 
+cv::\+\+Mat {\bfseries \+\_\+txim}
+\item 
+\Hypertarget{class_c_server_a884cb2eaf9cb624d269c36c32ceb5d1c}\label{class_c_server_a884cb2eaf9cb624d269c36c32ceb5d1c} 
+std::\+mutex {\bfseries \+\_\+image\+\_\+mutex}
+\item 
+\Hypertarget{class_c_server_a924a162a591dc548585418bd9172fd73}\label{class_c_server_a924a162a591dc548585418bd9172fd73} 
+std::\+mutex {\bfseries \+\_\+rx\+\_\+mutex}
+\item 
+\Hypertarget{class_c_server_ac07d5606e9e140540067ce8fbabba976}\label{class_c_server_ac07d5606e9e140540067ce8fbabba976} 
+std::\+mutex {\bfseries \+\_\+tx\+\_\+mutex}
+\item 
+\Hypertarget{class_c_server_ab5be7286809fdd06c173619f379522ec}\label{class_c_server_ab5be7286809fdd06c173619f379522ec} 
+std::\+vector$<$ std::\+string $>$ {\bfseries \+\_\+cmd\+\_\+list}
+\item 
+\Hypertarget{class_c_server_a55b2611bd6db2ea77541c6ae183950c3}\label{class_c_server_a55b2611bd6db2ea77541c6ae183950c3} 
+std::\+vector$<$ std::\+string $>$ {\bfseries \+\_\+send\+\_\+list}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+server.\+h\item 
+server.\+cpp\end{DoxyCompactItemize}

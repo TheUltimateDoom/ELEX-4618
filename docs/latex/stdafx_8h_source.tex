@@ -1,0 +1,43 @@
+\doxysection{stdafx.\+h}
+\hypertarget{stdafx_8h_source}{}\label{stdafx_8h_source}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <opencv2/opencv.hpp>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <opencv2/calib3d.hpp>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <opencv2/dnn.hpp>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <opencv2/imgproc.hpp>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <opencv2/highgui.hpp>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ OpenCV\ Library}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)ippicvmt.lib"{})}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifdef\ \_DEBUG}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)ittnotifyd.lib"{})}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)ippiwd.lib"{})}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)IlmImfd.lib"{})}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libtiffd.lib"{})}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libpngd.lib"{})}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libwebpd.lib"{})}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)zlibd.lib"{})}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libprotobufd.lib"{})}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libopenjp2d.lib"{})}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libjpeg-\/turbod.lib"{})}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)opencv\_world4100d.lib"{})}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)ittnotify.lib"{})}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)ippiw.lib"{})}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)IlmImf.lib"{})}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libtiff.lib"{})}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libpng.lib"{})}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libwebp.lib"{})}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)zlib.lib"{})}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libprotobuf.lib"{})}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libopenjp2.lib"{})}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)libjpeg-\/turbo.lib"{})}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}..\(\backslash\)\(\backslash\)opencv\(\backslash\)\(\backslash\)x64\(\backslash\)\(\backslash\)vc17\(\backslash\)\(\backslash\)staticlib\(\backslash\)\(\backslash\)opencv\_world4100.lib"{})}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+
+\end{DoxyCode}

@@ -1,0 +1,47 @@
+\doxysection{CClient Class Reference}
+\hypertarget{class_c_client}{}\label{class_c_client}\index{CClient@{CClient}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_client_aaa46e0b64686feac7ae21e2798285140}\label{class_c_client_aaa46e0b64686feac7ae21e2798285140} 
+void {\bfseries connect\+\_\+socket} (std::\+string addr, int port)
+\item 
+\Hypertarget{class_c_client_a554d42749ddd9d51fa59686a57d3cd66}\label{class_c_client_a554d42749ddd9d51fa59686a57d3cd66} 
+void {\bfseries close\+\_\+socket} ()
+\item 
+\Hypertarget{class_c_client_ad64c607c6f0aaabb49b4de7245c0169b}\label{class_c_client_ad64c607c6f0aaabb49b4de7245c0169b} 
+void {\bfseries tx\+\_\+str} (std::\+string str)
+\item 
+\Hypertarget{class_c_client_ac1eda49074ca5ff25f0797b983d725df}\label{class_c_client_ac1eda49074ca5ff25f0797b983d725df} 
+bool {\bfseries rx\+\_\+str} (std::\+string \&str)
+\item 
+\Hypertarget{class_c_client_ad977e738c6213aa845a44a6e7be8f563}\label{class_c_client_ad977e738c6213aa845a44a6e7be8f563} 
+bool {\bfseries rx\+\_\+im} (cv::\+\+Mat \&im)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_client_a01466b817058cbe4e4ca3621690b1174}\label{class_c_client_a01466b817058cbe4e4ca3621690b1174} 
+bool {\bfseries setblocking} (SOCKET fd, bool blocking)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_client_a149c8897bb03cfa698a739b46fe42e63}\label{class_c_client_a149c8897bb03cfa698a739b46fe42e63} 
+WSADATA {\bfseries \+\_\+wsdat}
+\item 
+\Hypertarget{class_c_client_ad22b05d27aabdfafb54743017b4f1d88}\label{class_c_client_ad22b05d27aabdfafb54743017b4f1d88} 
+int {\bfseries \+\_\+port}
+\item 
+\Hypertarget{class_c_client_a0ba087ef0c18ae5562de697b022d4586}\label{class_c_client_a0ba087ef0c18ae5562de697b022d4586} 
+std::\+string {\bfseries \+\_\+addr}
+\item 
+\Hypertarget{class_c_client_a56b580182f4e37bc5487e1af0a1cf92c}\label{class_c_client_a56b580182f4e37bc5487e1af0a1cf92c} 
+SOCKET {\bfseries \+\_\+socket}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+Client.\+h\item 
+Client.\+cpp\end{DoxyCompactItemize}

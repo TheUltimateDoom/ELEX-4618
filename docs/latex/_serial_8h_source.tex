@@ -1,0 +1,32 @@
+\doxysection{Serial.\+h}
+\hypertarget{_serial_8h_source}{}\label{_serial_8h_source}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <windows.h>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{typedef}\ std::basic\_string<TCHAR>\ tstring;}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }Serial}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00025\ \ \ \ \ HANDLE\ commHandle;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ Serial();}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~Serial();}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{bool}\ open\ (std::string\ commPortName,\ \textcolor{keywordtype}{int}\ bitRate\ =\ 115200);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_open();}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_serial_aae3d630a4fd81c8b148cb4eebdb91392}{write}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{int}\ buffLen);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_serial_a8266889eb5bfa7ef8b53595c5482133d}{read}}(\textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{int}\ buffLen);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ Flushes\ everything\ from\ the\ serial\ port's\ read\ buffer}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ flush();}
+\DoxyCodeLine{00055\ \};}
+
+\end{DoxyCode}

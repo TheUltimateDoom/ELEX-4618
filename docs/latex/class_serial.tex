@@ -1,0 +1,90 @@
+\doxysection{Serial Class Reference}
+\hypertarget{class_serial}{}\label{class_serial}\index{Serial@{Serial}}
+
+
+{\ttfamily \+\#include $<$Serial.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_serial_a599d3e220888815b8da436ea45a5c655}\label{class_serial_a599d3e220888815b8da436ea45a5c655} 
+bool {\bfseries open} (std::\+string comm\+Port\+Name, int bit\+Rate=115200)
+\item 
+\Hypertarget{class_serial_a40388a777cb349a1b8bde4c1ed8fbe92}\label{class_serial_a40388a777cb349a1b8bde4c1ed8fbe92} 
+bool {\bfseries is\+\_\+open} ()
+\item 
+int \doxymbox{\hyperlink{class_serial_aae3d630a4fd81c8b148cb4eebdb91392}{write}} (const char \texorpdfstring{$\ast$}{*}buffer, int buff\+Len)
+\item 
+int \doxymbox{\hyperlink{class_serial_a8266889eb5bfa7ef8b53595c5482133d}{read}} (char \texorpdfstring{$\ast$}{*}buffer, int buff\+Len)
+\item 
+\Hypertarget{class_serial_a63b7abf172cad25bfc998b3b1f98310f}\label{class_serial_a63b7abf172cad25bfc998b3b1f98310f} 
+void {\bfseries flush} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_serial_ad0bdbf4b9041c376b6839e97a87e7b30}\label{class_serial_ad0bdbf4b9041c376b6839e97a87e7b30} 
+HANDLE {\bfseries comm\+Handle}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{_serial_8h_source}{Serial.\+h}
+
+A very simple serial port control class that does NOT require MFC/\+\+AFX.
+
+License:\+ This source code can be used and/\+or modified without restrictions. It is provided as is and the author disclaims all warranties, expressed or implied, including, without limitation, the warranties of merchantability and of fitness for any purpose. The user must assume the entire risk of using the Software.
+
+\begin{DoxyAuthor}{Author}
+Hans de Ruiter
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 -- 28 October 2008 
+\end{DoxyVersion}
+
+
+\label{doc-func-members}
+\Hypertarget{class_serial_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_serial_a8266889eb5bfa7ef8b53595c5482133d}\index{Serial@{Serial}!read@{read}}
+\index{read@{read}!Serial@{Serial}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{class_serial_a8266889eb5bfa7ef8b53595c5482133d} 
+int Serial::\+read (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{buffer}{, }\item[{int}]{buff\+Len}{}\end{DoxyParamCaption})}
+
+Reads a string of bytes from the serial port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the buffer to be written to \\
+\hline
+{\em buff\+Len} & the size of the buffer\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int the number of bytes read 
+\end{DoxyReturn}
+\Hypertarget{class_serial_aae3d630a4fd81c8b148cb4eebdb91392}\index{Serial@{Serial}!write@{write}}
+\index{write@{write}!Serial@{Serial}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily \label{class_serial_aae3d630a4fd81c8b148cb4eebdb91392} 
+int Serial::\+write (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{buffer}{, }\item[{int}]{buff\+Len}{}\end{DoxyParamCaption})}
+
+Writes a string of bytes to the serial port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the buffer containing the bytes \\
+\hline
+{\em buff\+Len} & the number of bytes in the buffer\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int the number of bytes written 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+Serial.\+h\item 
+Serial.\+cpp\end{DoxyCompactItemize}
