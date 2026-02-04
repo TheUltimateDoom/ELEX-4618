@@ -8,6 +8,8 @@
     <ClCompile Include="CControl.cpp">
       <Filter>Lab 3</Filter>
     </ClCompile>
+    <ClCompile Include="CBase4618.cpp" />
+    <ClCompile Include="CSketch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cvui.h" />
@@ -17,6 +19,8 @@
     <ClInclude Include="CControl.h">
       <Filter>Lab 3</Filter>
     </ClInclude>
+    <ClInclude Include="CBase4618.h" />
+    <ClInclude Include="CSketch.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Lab 3">

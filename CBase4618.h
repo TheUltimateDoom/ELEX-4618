@@ -9,7 +9,7 @@
  */
 class CBase4618
 {
-private:
+protected:
     CControl _control;  ///< Communication with the Tiva C
     cv::Mat _canvas;    ///< The image to draw on
 

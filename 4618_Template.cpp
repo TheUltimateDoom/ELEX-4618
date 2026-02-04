@@ -26,6 +26,7 @@
 #include "Serial.h"
 
 #include "CControl.h"
+#include "CSketch.h"
 
 #define CANVAS_NAME "Display Image"
 
@@ -494,6 +495,8 @@ void lab3()
 ////////////////////////////////////////////////////////////////
 void lab4()
 {
+	CSketch sketch(cv::Size(500, 500), 3);
+	sketch.run();
 }
 
 ////////////////////////////////////////////////////////////////
