@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['read_0',['read',['../class_serial.html#a8266889eb5bfa7ef8b53595c5482133d',1,'Serial']]]
+  ['init_5fcom_0',['init_com',['../class_c_control.html#a3d1384d0e1ee2a4a478a798b46457468',1,'CControl']]]
 ];

@@ -1,4 +1,28 @@
 var searchData=
 [
-  ['_5fcom_0',['_com',['../class_c_control.html#aef87fbcfdcd323b1fdcf41be993e006c',1,'CControl']]]
+  ['_5faccelx_0',['_accelX',['../class_c_sketch.html#aa634d12e41bf5a02b60469e51f6f5d80',1,'CSketch']]],
+  ['_5faccely_1',['_accelY',['../class_c_sketch.html#aed88da7d9fa840dee24f9c63ce668d53',1,'CSketch']]],
+  ['_5faccelz_2',['_accelZ',['../class_c_sketch.html#ab9cabdfda69baf3207df803fa354ccf4',1,'CSketch']]],
+  ['_5fbtncolorraw_3',['_btnColorRaw',['../class_c_sketch.html#a6e99966106ea3eb64d1ae2951ac4fd7f',1,'CSketch']]],
+  ['_5fbtnexitrect_4',['_btnExitRect',['../class_c_sketch.html#a6392eff26f76a0dca7d5981d73f6a681',1,'CSketch']]],
+  ['_5fbtnresetraw_5',['_btnResetRaw',['../class_c_sketch.html#ae6ed02c3bb95428383440b47b5d03aff',1,'CSketch']]],
+  ['_5fbtnresetrect_6',['_btnResetRect',['../class_c_sketch.html#ad1b20267b8e0156e87b47db062a2ee86',1,'CSketch']]],
+  ['_5fcanvas_7',['_canvas',['../class_c_base4618.html#a1b925f757247b33ca2072f777f24582d',1,'CBase4618']]],
+  ['_5fcolorindex_8',['_colorIndex',['../class_c_sketch.html#af4625ae54065a936ab877e75d245d1b0',1,'CSketch']]],
+  ['_5fcolornames_9',['_colorNames',['../class_c_sketch.html#a9e9009f4b6e7ace40c2d27e22d8d65de',1,'CSketch']]],
+  ['_5fcolors_10',['_colors',['../class_c_sketch.html#aaf078575f5d5dfdf327beb023e1e7e0a',1,'CSketch']]],
+  ['_5fcom_11',['_com',['../class_c_control.html#aef87fbcfdcd323b1fdcf41be993e006c',1,'CControl']]],
+  ['_5fcontrol_12',['_control',['../class_c_base4618.html#acaf7813d01908edfe72479529b5cdd48',1,'CBase4618']]],
+  ['_5fcurrentpos_13',['_currentPos',['../class_c_sketch.html#a980d70d16f1b32e9ac5ddd8ad688c738',1,'CSketch']]],
+  ['_5fdatax_14',['_dataX',['../class_c_sketch.html#ad707e709bfad771c3bd526fb9a900a69',1,'CSketch']]],
+  ['_5fdatay_15',['_dataY',['../class_c_sketch.html#a6a7e7f181cf241b794dddae39fd2e681',1,'CSketch']]],
+  ['_5fdrawing_16',['_drawing',['../class_c_sketch.html#ae424551bbe52c02ef9caab994470bbb8',1,'CSketch']]],
+  ['_5flastbtncolorstate_17',['_lastBtnColorState',['../class_c_sketch.html#a0ab8f7679c514ddd24a58e56c1339e4e',1,'CSketch']]],
+  ['_5flastbtnresetstate_18',['_lastBtnResetState',['../class_c_sketch.html#a6355843df83704ee1d55f928b561f45b',1,'CSketch']]],
+  ['_5flastcolortime_19',['_lastColorTime',['../class_c_sketch.html#aa24a6814e81bba565b8c799249341f6d',1,'CSketch']]],
+  ['_5flastpos_20',['_lastPos',['../class_c_sketch.html#a6f144eb4b86068f1d9c5301e0a747806',1,'CSketch']]],
+  ['_5fprevaccelx_21',['_prevAccelX',['../class_c_sketch.html#a828567413025ec601ccb7fdc033f7096',1,'CSketch']]],
+  ['_5fprevaccely_22',['_prevAccelY',['../class_c_sketch.html#a4a19a25e77897ccf68328c1b2d02e1ca',1,'CSketch']]],
+  ['_5fprevaccelz_23',['_prevAccelZ',['../class_c_sketch.html#ad0cf7bdc05bd0bfd2c7aef06c260dad7',1,'CSketch']]],
+  ['_5fresetpending_24',['_resetPending',['../class_c_sketch.html#a1f76571176f613705ad76b3e4b19d2d8',1,'CSketch']]]
 ];

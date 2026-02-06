@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['write_0',['write',['../class_serial.html#aae3d630a4fd81c8b148cb4eebdb91392',1,'Serial']]]
+  ['serial_0',['Serial',['../class_serial.html',1,'']]],
+  ['set_5fdata_1',['set_data',['../class_c_control.html#a13f557815616ef66a8f5dd4b725d8c32',1,'CControl']]]
 ];

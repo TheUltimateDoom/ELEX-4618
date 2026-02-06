@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7eccontrol_0',['~CControl',['../class_c_control.html#ab2ae420ef75b010c0c9078e597781105',1,'CControl']]]
+  ['set_5fdata_0',['set_data',['../class_c_control.html#a13f557815616ef66a8f5dd4b725d8c32',1,'CControl']]]
 ];

@@ -1,0 +1,221 @@
+\doxysection{CSketch Class Reference}
+\hypertarget{class_c_sketch}{}\label{class_c_sketch}\index{CSketch@{CSketch}}
+
+
+A class that implements the Etch-\/\+A-\/\+Sketch game with hardware integration. Inherits from \doxylink{class_c_base4618}{CBase4618} and provides hardware I/\+O, game logic, and rendering for a drawing application controlled by joysticks, buttons, and an accelerometer.  
+
+
+
+
+{\ttfamily \+\#include $<$CSketch.\+h$>$}
+
+Inheritance diagram for CSketch:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_c_sketch}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_c_sketch_ad037fd70b9dd943a6be021a0165c9058}{CSketch}} (cv::\+\+Size size, int com\+Port)
+\begin{DoxyCompactList}\small\item\em Constructor for the \doxylink{class_c_sketch}{CSketch} class. \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{class_c_sketch_ac5ebec02d8a770f66958da2b8e616a59}{gpio}} () override
+\begin{DoxyCompactList}\small\item\em Handles all hardware communication. Reads joystick, accelerometer, and buttons; writes to hardware LEDs. \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{class_c_sketch_a8b6185fa49d7f9d8909dcffde3cdec3d}{update}} () override
+\begin{DoxyCompactList}\small\item\em Implements game logic and physics. Calculates velocity-\/based movement, handles button debouncing, and detects shaking. \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{class_c_sketch_a9db432ca87bbd8c8dfc0b38f274640f6}{draw}} () override
+\begin{DoxyCompactList}\small\item\em Renders the game state to the screen. Clears the canvas, overlays the drawing layer, and renders UI text/\+buttons. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \doxymbox{\hyperlink{class_c_base4618}{CBase4618}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries run} ()
+\begin{DoxyCompactList}\small\item\em Runs the game loop (scan inputs -\/\texorpdfstring{$>$}{>} update -\/\texorpdfstring{$>$}{>} draw -\/\texorpdfstring{$>$}{>} check for \textquotesingle{}q\textquotesingle{}). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \doxymbox{\hyperlink{class_c_sketch_a8c773764c5aa81a967f12735eeea1ecb}{on\+\_\+mouse}} (int event, int x, int y, int flags, void \texorpdfstring{$\ast$}{*}userdata)
+\begin{DoxyCompactList}\small\item\em Static callback function for Open\+CV mouse events. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_sketch_af4625ae54065a936ab877e75d245d1b0}\label{class_c_sketch_af4625ae54065a936ab877e75d245d1b0} 
+int {\bfseries \+\_\+color\+Index}
+\begin{DoxyCompactList}\small\item\em Current color index in the \+\_\+colors vector. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a1f76571176f613705ad76b3e4b19d2d8}\label{class_c_sketch_a1f76571176f613705ad76b3e4b19d2d8} 
+bool {\bfseries \+\_\+reset\+Pending}
+\begin{DoxyCompactList}\small\item\em Flag to indicate if a reset is pending (set in update, handled in draw). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a980d70d16f1b32e9ac5ddd8ad688c738}\label{class_c_sketch_a980d70d16f1b32e9ac5ddd8ad688c738} 
+cv::\+\+Point {\bfseries \+\_\+current\+Pos}
+\begin{DoxyCompactList}\small\item\em Current position of the "{}pen"{} on the canvas. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a6f144eb4b86068f1d9c5301e0a747806}\label{class_c_sketch_a6f144eb4b86068f1d9c5301e0a747806} 
+cv::\+\+Point {\bfseries \+\_\+last\+Pos}
+\begin{DoxyCompactList}\small\item\em Last position of the "{}pen"{} (used for drawing lines). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_ad707e709bfad771c3bd526fb9a900a69}\label{class_c_sketch_ad707e709bfad771c3bd526fb9a900a69} 
+int {\bfseries \+\_\+dataX}
+\begin{DoxyCompactList}\small\item\em Joystick X-\/axis data. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a6a7e7f181cf241b794dddae39fd2e681}\label{class_c_sketch_a6a7e7f181cf241b794dddae39fd2e681} 
+int {\bfseries \+\_\+dataY}
+\begin{DoxyCompactList}\small\item\em Joystick Y-\/axis data. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a6e99966106ea3eb64d1ae2951ac4fd7f}\label{class_c_sketch_a6e99966106ea3eb64d1ae2951ac4fd7f} 
+int {\bfseries \+\_\+btn\+Color\+Raw}
+\begin{DoxyCompactList}\small\item\em Raw state of the color change button (active low). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_ae6ed02c3bb95428383440b47b5d03aff}\label{class_c_sketch_ae6ed02c3bb95428383440b47b5d03aff} 
+int {\bfseries \+\_\+btn\+Reset\+Raw}
+\begin{DoxyCompactList}\small\item\em Raw state of the reset button (active low). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a0ab8f7679c514ddd24a58e56c1339e4e}\label{class_c_sketch_a0ab8f7679c514ddd24a58e56c1339e4e} 
+int {\bfseries \+\_\+last\+Btn\+Color\+State}
+\begin{DoxyCompactList}\small\item\em Last state of the color button for edge detection. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a6355843df83704ee1d55f928b561f45b}\label{class_c_sketch_a6355843df83704ee1d55f928b561f45b} 
+int {\bfseries \+\_\+last\+Btn\+Reset\+State}
+\begin{DoxyCompactList}\small\item\em Last state of the reset button for edge detection. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_aa24a6814e81bba565b8c799249341f6d}\label{class_c_sketch_aa24a6814e81bba565b8c799249341f6d} 
+double {\bfseries \+\_\+last\+Color\+Time}
+\begin{DoxyCompactList}\small\item\em Timestamp of the last color change for debouncing. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_ae424551bbe52c02ef9caab994470bbb8}\label{class_c_sketch_ae424551bbe52c02ef9caab994470bbb8} 
+cv::\+\+Mat {\bfseries \+\_\+drawing}
+\begin{DoxyCompactList}\small\item\em Persistent layer for drawn lines (separate from \+\_\+canvas which is cleared each frame). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_aaf078575f5d5dfdf327beb023e1e7e0a}\label{class_c_sketch_aaf078575f5d5dfdf327beb023e1e7e0a} 
+std::\+vector$<$ cv::\+\+Scalar $>$ {\bfseries \+\_\+colors}
+\begin{DoxyCompactList}\small\item\em List of colors available for drawing (in BGR format). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a9e9009f4b6e7ace40c2d27e22d8d65de}\label{class_c_sketch_a9e9009f4b6e7ace40c2d27e22d8d65de} 
+std::\+vector$<$ std::\+string $>$ {\bfseries \+\_\+color\+Names}
+\begin{DoxyCompactList}\small\item\em Corresponding color names to display. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_ad1b20267b8e0156e87b47db062a2ee86}\label{class_c_sketch_ad1b20267b8e0156e87b47db062a2ee86} 
+cv::\+\+Rect {\bfseries \+\_\+btn\+Reset\+Rect}
+\begin{DoxyCompactList}\small\item\em Rectangle defining the area of the Reset button for mouse interaction. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a6392eff26f76a0dca7d5981d73f6a681}\label{class_c_sketch_a6392eff26f76a0dca7d5981d73f6a681} 
+cv::\+\+Rect {\bfseries \+\_\+btn\+Exit\+Rect}
+\begin{DoxyCompactList}\small\item\em Rectangle defining the area of the Exit button for mouse interaction. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_aa634d12e41bf5a02b60469e51f6f5d80}\label{class_c_sketch_aa634d12e41bf5a02b60469e51f6f5d80} 
+float {\bfseries \+\_\+accelX}
+\begin{DoxyCompactList}\small\item\em Current X-\/axis acceleration. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_aed88da7d9fa840dee24f9c63ce668d53}\label{class_c_sketch_aed88da7d9fa840dee24f9c63ce668d53} 
+float {\bfseries \+\_\+accelY}
+\begin{DoxyCompactList}\small\item\em Current Y-\/axis acceleration. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_ab9cabdfda69baf3207df803fa354ccf4}\label{class_c_sketch_ab9cabdfda69baf3207df803fa354ccf4} 
+float {\bfseries \+\_\+accelZ}
+\begin{DoxyCompactList}\small\item\em Current Z-\/axis acceleration. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a828567413025ec601ccb7fdc033f7096}\label{class_c_sketch_a828567413025ec601ccb7fdc033f7096} 
+float {\bfseries \+\_\+prev\+AccelX}
+\begin{DoxyCompactList}\small\item\em Previous X-\/axis acceleration (used for shake detection). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_a4a19a25e77897ccf68328c1b2d02e1ca}\label{class_c_sketch_a4a19a25e77897ccf68328c1b2d02e1ca} 
+float {\bfseries \+\_\+prev\+AccelY}
+\begin{DoxyCompactList}\small\item\em Previous Y-\/axis acceleration (used for shake detection). \end{DoxyCompactList}\item 
+\Hypertarget{class_c_sketch_ad0cf7bdc05bd0bfd2c7aef06c260dad7}\label{class_c_sketch_ad0cf7bdc05bd0bfd2c7aef06c260dad7} 
+float {\bfseries \+\_\+prev\+AccelZ}
+\begin{DoxyCompactList}\small\item\em Previous Z-\/axis acceleration (used for shake detection). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \doxymbox{\hyperlink{class_c_base4618}{CBase4618}}}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_c_control}{CControl}} {\bfseries \+\_\+control}
+\begin{DoxyCompactList}\small\item\em Communication with the Tiva C. \end{DoxyCompactList}\item 
+cv::\+\+Mat {\bfseries \+\_\+canvas}
+\begin{DoxyCompactList}\small\item\em The image to draw on. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class that implements the Etch-\/\+A-\/\+Sketch game with hardware integration. Inherits from \doxylink{class_c_base4618}{CBase4618} and provides hardware I/\+O, game logic, and rendering for a drawing application controlled by joysticks, buttons, and an accelerometer. 
+
+\begin{DoxyAuthor}{Author}
+Farhan Sadiq 
+\end{DoxyAuthor}
+
+
+\label{doc-constructors}
+\Hypertarget{class_c_sketch_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_c_sketch_ad037fd70b9dd943a6be021a0165c9058}\index{CSketch@{CSketch}!CSketch@{CSketch}}
+\index{CSketch@{CSketch}!CSketch@{CSketch}}
+\doxysubsubsection{\texorpdfstring{CSketch()}{CSketch()}}
+{\footnotesize\ttfamily \label{class_c_sketch_ad037fd70b9dd943a6be021a0165c9058} 
+CSketch::\+\+CSketch (\begin{DoxyParamCaption}\item[{cv::\+\+Size}]{size}{, }\item[{int}]{com\+Port}{}\end{DoxyParamCaption})}
+
+
+
+Constructor for the \doxylink{class_c_sketch}{CSketch} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The desired dimensions of the drawing canvas. \\
+\hline
+{\em com\+Port} & The COM port number for the microcontroller communication. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{class_c_sketch_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_c_sketch_a9db432ca87bbd8c8dfc0b38f274640f6}\index{CSketch@{CSketch}!draw@{draw}}
+\index{draw@{draw}!CSketch@{CSketch}}
+\doxysubsubsection{\texorpdfstring{draw()}{draw()}}
+{\footnotesize\ttfamily \label{class_c_sketch_a9db432ca87bbd8c8dfc0b38f274640f6} 
+void CSketch::\+draw (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Renders the game state to the screen. Clears the canvas, overlays the drawing layer, and renders UI text/\+buttons. 
+
+
+
+Implements \doxymbox{\hyperlink{class_c_base4618_a0987bf28e9beed4753d3628fcddc3315}{CBase4618}}.
+
+\Hypertarget{class_c_sketch_ac5ebec02d8a770f66958da2b8e616a59}\index{CSketch@{CSketch}!gpio@{gpio}}
+\index{gpio@{gpio}!CSketch@{CSketch}}
+\doxysubsubsection{\texorpdfstring{gpio()}{gpio()}}
+{\footnotesize\ttfamily \label{class_c_sketch_ac5ebec02d8a770f66958da2b8e616a59} 
+void CSketch::\+gpio (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Handles all hardware communication. Reads joystick, accelerometer, and buttons; writes to hardware LEDs. 
+
+
+
+Implements \doxymbox{\hyperlink{class_c_base4618_a8d55ae2f3ce30021775565dc895b8b12}{CBase4618}}.
+
+\Hypertarget{class_c_sketch_a8c773764c5aa81a967f12735eeea1ecb}\index{CSketch@{CSketch}!on\_mouse@{on\_mouse}}
+\index{on\_mouse@{on\_mouse}!CSketch@{CSketch}}
+\doxysubsubsection{\texorpdfstring{on\_mouse()}{on\_mouse()}}
+{\footnotesize\ttfamily \label{class_c_sketch_a8c773764c5aa81a967f12735eeea1ecb} 
+void CSketch::\+on\+\_\+mouse (\begin{DoxyParamCaption}\item[{int}]{event}{, }\item[{int}]{x}{, }\item[{int}]{y}{, }\item[{int}]{flags}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{userdata}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Static callback function for Open\+CV mouse events. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & The type of mouse event (e.\+g., LBUTTONDOWN). \\
+\hline
+{\em x} & The x-\/coordinate of the mouse. \\
+\hline
+{\em y} & The y-\/coordinate of the mouse. \\
+\hline
+{\em flags} & Specific event flags. \\
+\hline
+{\em userdata} & Pointer to the \doxylink{class_c_sketch}{CSketch} instance (this). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_c_sketch_a8b6185fa49d7f9d8909dcffde3cdec3d}\index{CSketch@{CSketch}!update@{update}}
+\index{update@{update}!CSketch@{CSketch}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{class_c_sketch_a8b6185fa49d7f9d8909dcffde3cdec3d} 
+void CSketch::\+update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements game logic and physics. Calculates velocity-\/based movement, handles button debouncing, and detects shaking. 
+
+
+
+Implements \doxymbox{\hyperlink{class_c_base4618_a1e2f3c16eb99b5bfdd5d5254aee39ee6}{CBase4618}}.
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+CSketch.\+h\item 
+CSketch.\+cpp\end{DoxyCompactItemize}

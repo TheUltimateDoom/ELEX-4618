@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7eccontrol_0',['~CControl',['../class_c_control.html#ab2ae420ef75b010c0c9078e597781105',1,'CControl']]]
+  ['trackbarparams_0',['TrackbarParams',['../structcvui_1_1internal_1_1_trackbar_params.html',1,'cvui::internal']]]
 ];

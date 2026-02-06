@@ -10,8 +10,10 @@ var annotated_dup =
       [ "cvui_mouse_t", "structcvui_1_1cvui__mouse__t.html", null ],
       [ "cvui_context_t", "structcvui_1_1cvui__context__t.html", null ]
     ] ],
+    [ "CBase4618", "class_c_base4618.html", "class_c_base4618" ],
     [ "CClient", "class_c_client.html", null ],
     [ "CControl", "class_c_control.html", "class_c_control" ],
     [ "CServer", "class_c_server.html", null ],
+    [ "CSketch", "class_c_sketch.html", "class_c_sketch" ],
     [ "Serial", "class_serial.html", "class_serial" ]
 ];

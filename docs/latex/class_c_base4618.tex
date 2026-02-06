@@ -1,0 +1,94 @@
+\doxysection{CBase4618 Class Reference}
+\hypertarget{class_c_base4618}{}\label{class_c_base4618}\index{CBase4618@{CBase4618}}
+
+
+The base class for ELEX 4618 labs. Holds the serial control and the drawing canvas.  
+
+
+
+
+{\ttfamily \+\#include $<$CBase4618.\+h$>$}
+
+Inheritance diagram for CBase4618:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_c_base4618}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_base4618_a535e816d735d10d6048dd39cd893d393}\label{class_c_base4618_a535e816d735d10d6048dd39cd893d393} 
+void {\bfseries run} ()
+\begin{DoxyCompactList}\small\item\em Runs the game loop (scan inputs -\/\texorpdfstring{$>$}{>} update -\/\texorpdfstring{$>$}{>} draw -\/\texorpdfstring{$>$}{>} check for \textquotesingle{}q\textquotesingle{}). \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{class_c_base4618_a8d55ae2f3ce30021775565dc895b8b12}{gpio}} ()=0
+\begin{DoxyCompactList}\small\item\em Pure virtual method for Hardware I/\+O (Get/\+\+Set Data). \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{class_c_base4618_a1e2f3c16eb99b5bfdd5d5254aee39ee6}{update}} ()=0
+\begin{DoxyCompactList}\small\item\em Pure virtual function to update game state. \end{DoxyCompactList}\item 
+virtual void \doxymbox{\hyperlink{class_c_base4618_a0987bf28e9beed4753d3628fcddc3315}{draw}} ()=0
+\begin{DoxyCompactList}\small\item\em Pure virtual function to render the game. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_c_base4618_acaf7813d01908edfe72479529b5cdd48}\label{class_c_base4618_acaf7813d01908edfe72479529b5cdd48} 
+\doxymbox{\hyperlink{class_c_control}{CControl}} {\bfseries \+\_\+control}
+\begin{DoxyCompactList}\small\item\em Communication with the Tiva C. \end{DoxyCompactList}\item 
+\Hypertarget{class_c_base4618_a1b925f757247b33ca2072f777f24582d}\label{class_c_base4618_a1b925f757247b33ca2072f777f24582d} 
+cv::\+\+Mat {\bfseries \+\_\+canvas}
+\begin{DoxyCompactList}\small\item\em The image to draw on. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The base class for ELEX 4618 labs. Holds the serial control and the drawing canvas. 
+
+\label{doc-func-members}
+\Hypertarget{class_c_base4618_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_c_base4618_a0987bf28e9beed4753d3628fcddc3315}\index{CBase4618@{CBase4618}!draw@{draw}}
+\index{draw@{draw}!CBase4618@{CBase4618}}
+\doxysubsubsection{\texorpdfstring{draw()}{draw()}}
+{\footnotesize\ttfamily \label{class_c_base4618_a0987bf28e9beed4753d3628fcddc3315} 
+virtual void CBase4618::\+draw (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Pure virtual function to render the game. 
+
+
+
+Implemented in \doxymbox{\hyperlink{class_c_sketch_a9db432ca87bbd8c8dfc0b38f274640f6}{CSketch}}.
+
+\Hypertarget{class_c_base4618_a8d55ae2f3ce30021775565dc895b8b12}\index{CBase4618@{CBase4618}!gpio@{gpio}}
+\index{gpio@{gpio}!CBase4618@{CBase4618}}
+\doxysubsubsection{\texorpdfstring{gpio()}{gpio()}}
+{\footnotesize\ttfamily \label{class_c_base4618_a8d55ae2f3ce30021775565dc895b8b12} 
+virtual void CBase4618::\+gpio (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Pure virtual method for Hardware I/\+O (Get/\+\+Set Data). 
+
+
+
+Implemented in \doxymbox{\hyperlink{class_c_sketch_ac5ebec02d8a770f66958da2b8e616a59}{CSketch}}.
+
+\Hypertarget{class_c_base4618_a1e2f3c16eb99b5bfdd5d5254aee39ee6}\index{CBase4618@{CBase4618}!update@{update}}
+\index{update@{update}!CBase4618@{CBase4618}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{class_c_base4618_a1e2f3c16eb99b5bfdd5d5254aee39ee6} 
+virtual void CBase4618::\+update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Pure virtual function to update game state. 
+
+
+
+Implemented in \doxymbox{\hyperlink{class_c_sketch_a8b6185fa49d7f9d8909dcffde3cdec3d}{CSketch}}.
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+CBase4618.\+h\item 
+CBase4618.\+cpp\end{DoxyCompactItemize}
