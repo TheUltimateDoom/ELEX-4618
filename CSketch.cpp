@@ -185,25 +185,21 @@ void CSketch::draw()
 
 void CSketch::on_mouse(int event, int x, int y, int flags, void* userdata)
 {
-    // 1. Recover the "this" pointer
     CSketch* self = (CSketch*)userdata;
 
-    // 2. Handle Left Click
     if (event == cv::EVENT_LBUTTONDOWN)
     {
-        // Check Reset Button
+        // Reset Logic
         if (self->_btnResetRect.contains(cv::Point(x, y)))
         {
             self->_resetPending = true;
-            std::cout << "GUI: Reset Pressed" << std::endl;
         }
 
-        // Check Exit Button
+        // Exit Logic
         else if (self->_btnExitRect.contains(cv::Point(x, y)))
         {
-            // Access the protected '_running' flag from CBase4618
-            self->_running = false;
             std::cout << "GUI: Exit Pressed" << std::endl;
+            exit(0);
         }
     }
 }

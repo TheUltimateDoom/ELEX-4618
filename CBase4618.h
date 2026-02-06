@@ -12,11 +12,10 @@ class CBase4618
 protected:
     CControl _control;  ///< Communication with the Tiva C
     cv::Mat _canvas;    ///< The image to draw on
-    bool _running;
 
 public:
     /**
-     * @brief Runs the game loop (update -> draw -> check for 'q').
+     * @brief Runs the game loop (scan inputs -> update -> draw -> check for 'q').
      */
     void run();
 
