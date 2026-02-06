@@ -12,6 +12,7 @@ class CBase4618
 protected:
     CControl _control;  ///< Communication with the Tiva C
     cv::Mat _canvas;    ///< The image to draw on
+    bool _running;
 
 public:
     /**
@@ -20,12 +21,17 @@ public:
     void run();
 
     /**
+     * @brief Pure virtual method for Hardware I/O (Get/Set Data).
+     */
+    virtual void gpio() = 0;
+
+    /**
      * @brief Pure virtual function to update game state.
      */
-    virtual void update() = 0; // [cite: 21]
+    virtual void update() = 0;
 
     /**
      * @brief Pure virtual function to render the game.
      */
-    virtual void draw() = 0;   // [cite: 21]
+    virtual void draw() = 0;
 };

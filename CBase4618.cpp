@@ -3,10 +3,12 @@
 
 void CBase4618::run()
 {
-    // Loop until user presses 'q'
+    _running = true;
     char key = ' ';
-    while (key != 'q')
+
+    while (_running && key != 'q')
     {
+        gpio();   // 1. Get Inputs (Slow COM port access)
         update(); // Read inputs, calc logic
         draw();   // Update screen
 

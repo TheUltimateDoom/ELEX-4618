@@ -1,117 +1,209 @@
 #include "stdafx.h"
 #include "CSketch.h"
 
-// CONSTRUCTOR
+
 CSketch::CSketch(cv::Size size, int comPort)
 {
-    // 1. Initialize the CControl object with the correct COM port
     _control.init_com(comPort);
 
-    // 2. Create the OpenCV canvas (Black background, 3 color channels)
-    // Source: [cite: 27, 28]
+    // Initialize both matrices
     _canvas = cv::Mat::zeros(size, CV_8UC3);
+    _drawing = cv::Mat::zeros(size, CV_8UC3); // Persistent layer
 
-    // Initialize coordinates to center (to prevent a line jumping from 0,0 at start)
+    // Initialize Variables
+    _dataX = 0; _dataY = 0;
+    _btnColorRaw = 1; _btnResetRaw = 1; // Assume unpressed (Active Low)
+    _lastBtnColorState = 1;
+    _lastColorTime = 0;
+
+    _colorIndex = 0;
     _currentPos = cv::Point(size.width / 2, size.height / 2);
     _lastPos = _currentPos;
 
-    // Setup Colors (OpenCV is BGR)
-    // Index 0: RED
-    _colors.push_back(cv::Scalar(0, 0, 255));
+    // Setup Colors (BGR)
+    _colors.push_back(cv::Scalar(0, 0, 255));   // Red
+    _colors.push_back(cv::Scalar(0, 255, 0));   // Green
+    _colors.push_back(cv::Scalar(255, 0, 0));   // Blue
     _colorNames.push_back("RED");
-
-    // Index 1: GREEN
-    _colors.push_back(cv::Scalar(0, 255, 0));
     _colorNames.push_back("GREEN");
-
-    // Index 2: BLUE
-    _colors.push_back(cv::Scalar(255, 0, 0));
     _colorNames.push_back("BLUE");
 
-    _colorIndex = 0; // Start Red
+    // GUI Setup
+    _btnResetRect = cv::Rect(10, 70, 80, 30);
+    _btnExitRect = cv::Rect(100, 70, 80, 30);
+
+    cv::namedWindow("Etch-A-Sketch");
+    cv::setMouseCallback("Etch-A-Sketch", on_mouse, this);
 }
 
-// UPDATE METHOD
+void CSketch::gpio()
+{
+    // Read data and update member variables
+    _dataX = _control.get_analog(JOY_X);
+    _dataY = _control.get_analog(JOY_Y);
+
+    _control.get_data(DIGITAL, BTN_COLOR_CH, _btnColorRaw);
+    _control.get_data(DIGITAL, BTN_RESET_CH, _btnResetRaw);
+
+    //  OUTPUTS: Update LEDs based on Game State (_colorIndex)
+    // We calculate logic in update(), but we WRITE to hardware here.
+    _control.set_data(DIGITAL, LED_RED, (_colorIndex == 0) ? 1 : 0);
+    _control.set_data(DIGITAL, LED_GRN, (_colorIndex == 1) ? 1 : 0);
+    _control.set_data(DIGITAL, LED_BLU, (_colorIndex == 2) ? 1 : 0);
+
+    // Read Accelerometer
+    // We assume get_analog handles the 0-4095 conversion
+    _prevAccelX = _accelX; // Save previous frame for comparison
+    _prevAccelY = _accelY;
+    _prevAccelZ = _accelZ;
+
+    _accelX = _control.get_analog(ACCEL_X);
+    _accelY = _control.get_analog(ACCEL_Y);
+    _accelZ = _control.get_analog(ACCEL_Z);
+}
+
 void CSketch::update()
 {
-    int rawX = 0;
-    int rawY = 0;
 
-    // 1. Read Analog Inputs (Adjust channels to match your wiring!)
-    // Assuming X is Ch 11 and Y is Ch 4 based on your previous labs.
-    bool successX = _control.get_data(ANALOG, 11, rawX);
-    bool successY = _control.get_data(ANALOG, 4, rawY);
+    std::cout << "RawX: " << std::fixed << std::setprecision(1) << _dataX
+        << " | RawY: " << _dataY
+        << " | ScreenPos: [" << _currentPos.x << "," << _currentPos.y << "]"
+        << "          \r";
 
-    if (successX && successY)
+    // --- 1. SETUP CONSTANTS (Matched to 0-100 Input) ---
+    float deadzoneMin = 45.0f; // 45%
+    float deadzoneMax = 50.0f; // 55%
+    float maxSpeed = 8.0f;     // Pixels per frame
+
+    // --- 2. X MOVEMENT ---
+    if (_dataX < deadzoneMin) // Move Left
     {
-        // 2. Map 0-4095 to 0-Width (and Height)
-        // Source: 
-
-        // Note: We cast to float for precision, then back to int for pixels.
-        // We invert Y (_canvas.rows - ...) because on screens, Y=0 is the TOP, 
-        // but on joysticks, "Up" usually means higher voltage.
-        int screenX = (int)((rawX / 4095.0f) * _canvas.cols);
-        int screenY = _canvas.rows - (int)((rawY / 4095.0f) * _canvas.rows);
-
-        // Update positions
-        _lastPos = _currentPos;  // Save where we were
-        _currentPos = cv::Point(screenX, screenY); // Update where we are
+        // Map 45->0 to 0->MaxSpeed
+        float ratio = (deadzoneMin - _dataX) / deadzoneMin;
+        _currentPos.x -= (int)(ratio * maxSpeed);
+    }
+    else if (_dataX > deadzoneMax) // Move Right
+    {
+        // Map 55->100 to 0->MaxSpeed
+        float ratio = (_dataX - deadzoneMax) / (100.0f - deadzoneMax);
+        _currentPos.x += (int)(ratio * maxSpeed);
     }
 
-    // 2. Handle Color Button (Debounced) 
-    // Assuming S2 (Channel 32) is for Color
-    if (_control.get_button(BTN_COLOR_CH) == BUTTON_PRESS_SUCCESS)
+    // --- 3. Y MOVEMENT ---
+    if (_dataY < deadzoneMin) // Move Down (Positive Y)
     {
-        _colorIndex++;
-        if (_colorIndex >= _colors.size())
-        {
-            _colorIndex = 0; // Wrap around to start
-        }
+        float ratio = (deadzoneMin - _dataY) / deadzoneMin;
+        _currentPos.y += (int)(ratio * maxSpeed);
+    }
+    else if (_dataY > deadzoneMax) // Move Up (Negative Y)
+    {
+        float ratio = (_dataY - deadzoneMax) / (100.0f - deadzoneMax);
+        _currentPos.y -= (int)(ratio * maxSpeed);
     }
 
-    // 3. Handle Reset Button (Debounced) 
-    // Assuming S1 (Channel 33) is for Reset
-    if (_control.get_button(BTN_RESET_CH) == BUTTON_PRESS_SUCCESS)
+    // --- 4. CLAMP ---
+    // (Keep your boundary checks here)
+    if (_currentPos.x < 0) _currentPos.x = 0;
+    if (_currentPos.x >= _canvas.cols) _currentPos.x = _canvas.cols - 1;
+    if (_currentPos.y < 0) _currentPos.y = 0;
+    if (_currentPos.y >= _canvas.rows) _currentPos.y = _canvas.rows - 1;
+
+    // --- 5. DRAW ---
+    cv::line(_drawing, _lastPos, _currentPos, _colors[_colorIndex], 2);
+    _lastPos = _currentPos;
+
+
+    // --- 2. SHAKE DETECTION (Stretch Goal) ---
+    //[cite: 146]: "reset when you shake the controller (accelerometer)"
+
+    // Calculate Delta (Change in acceleration)
+    float deltaX = std::abs(_accelX - _prevAccelX);
+    float deltaY = std::abs(_accelY - _prevAccelY);
+    // float deltaZ = std::abs(_accelZ - _prevAccelZ); // Optional
+
+    // Define Sensitivity Threshold (Trial and error usually needed)
+    // If your get_analog returns 0-100, a change of 10-15 is usually a hard shake.
+    float shakeThreshold = 15.0f;
+
+    if (deltaX > shakeThreshold || deltaY > shakeThreshold)
     {
+        std::cout << "Shake Detected! Clearing..." << std::endl;
         _resetPending = true;
     }
 
-    // 4. Sync LED with Current Color 
-    // Turn off all LEDs first to be safe
-    _control.set_data(DIGITAL, LED_RED, 0);
-    _control.set_data(DIGITAL, LED_GRN, 0);
-    _control.set_data(DIGITAL, LED_BLU, 0);
+    // --- 2. BUTTON DEBOUNCE LOGIC ---
+    // Handle Color Button (Debounce logic moved here since we can't use CControl's internal timer easily)
+    double currentTime = cv::getTickCount() / cv::getTickFrequency();
 
-    // Turn on the one matching _colorIndex
-    if (_colorIndex == 0) _control.set_data(DIGITAL, LED_RED, 1);
-    else if (_colorIndex == 1) _control.set_data(DIGITAL, LED_GRN, 1);
-    else if (_colorIndex == 2) _control.set_data(DIGITAL, LED_BLU, 1);
+    // Detect Falling Edge (Transition from 1 to 0) + Timeout
+    if (_btnColorRaw == 0 && _lastBtnColorState == 1 && (currentTime - _lastColorTime > 0.25)) // 250ms debounce
+    {
+        _colorIndex++;
+        if (_colorIndex >= _colors.size()) _colorIndex = 0;
+        _lastColorTime = currentTime;
+    }
+    _lastBtnColorState = _btnColorRaw;
+
+    // Handle Reset Button
+    if (_btnResetRaw == 0) // Simple check for reset
+    {
+        _resetPending = true;
+    }
 }
 
-// DRAW METHOD
 void CSketch::draw()
 {
-    // 1. Handle Reset [cite: 50]
+    // 1. Clear the canvas (Requirement 108)
+    _canvas = cv::Mat::zeros(_canvas.size(), CV_8UC3);
+
+    // 2. Handle Reset Logic (if pending, clear the persistent layer)
     if (_resetPending)
     {
-        // Clear screen to black
-        _canvas = cv::Mat::zeros(_canvas.size(), CV_8UC3);
-        _resetPending = false; // Reset complete
+        _drawing = cv::Mat::zeros(_drawing.size(), CV_8UC3);
+        _resetPending = false;
     }
 
-    // 2. Draw Line
-    // Use _colors[_colorIndex] to get the current BGR color
-    cv::line(_canvas, _lastPos, _currentPos, _colors[_colorIndex], 2);
+    // 3. Copy persistent drawing onto the fresh canvas
+    _drawing.copyTo(_canvas);
 
-    // 3. Draw UI Text [cite: 46]
-    // We draw a filled rectangle first so the text is readable over the drawing
-    cv::rectangle(_canvas, cv::Point(0, 0), cv::Point(200, 60), cv::Scalar(50, 50, 50), -1);
+    // 4. Draw UI Elements (Text & Buttons)
+    cv::rectangle(_canvas, cv::Point(0, 0), cv::Point(200, 110), cv::Scalar(50, 50, 50), -1);
 
-    // Display the color name
     std::string text = "Color: " + _colorNames[_colorIndex];
-    cv::putText(_canvas, text, cv::Point(10, 40),
-        cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
+    cv::putText(_canvas, text, cv::Point(10, 40), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 1);
 
-    // 4. Show Image
+    // Draw Buttons
+    cv::rectangle(_canvas, _btnResetRect, cv::Scalar(100, 200, 100), -1);
+    cv::putText(_canvas, "RESET", cv::Point(_btnResetRect.x + 10, _btnResetRect.y + 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1);
+
+    cv::rectangle(_canvas, _btnExitRect, cv::Scalar(100, 100, 200), -1);
+    cv::putText(_canvas, "EXIT", cv::Point(_btnExitRect.x + 20, _btnExitRect.y + 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1);
+
+    // 5. Show
     cv::imshow("Etch-A-Sketch", _canvas);
+}
+
+void CSketch::on_mouse(int event, int x, int y, int flags, void* userdata)
+{
+    // 1. Recover the "this" pointer
+    CSketch* self = (CSketch*)userdata;
+
+    // 2. Handle Left Click
+    if (event == cv::EVENT_LBUTTONDOWN)
+    {
+        // Check Reset Button
+        if (self->_btnResetRect.contains(cv::Point(x, y)))
+        {
+            self->_resetPending = true;
+            std::cout << "GUI: Reset Pressed" << std::endl;
+        }
+
+        // Check Exit Button
+        else if (self->_btnExitRect.contains(cv::Point(x, y)))
+        {
+            // Access the protected '_running' flag from CBase4618
+            self->_running = false;
+            std::cout << "GUI: Exit Pressed" << std::endl;
+        }
+    }
 }
