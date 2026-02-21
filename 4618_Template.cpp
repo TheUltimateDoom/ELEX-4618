@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
+//#include "CPong.h"
+
 // Add simple GUI elements
 #define CVUI_DISABLE_COMPILATION_NOTICES
 #define CVUI_IMPLEMENTATION
@@ -27,6 +29,8 @@
 
 #include "CControl.h"
 #include "CSketch.h"
+#include "CPong.h"
+
 
 #define CANVAS_NAME "Display Image"
 
@@ -504,6 +508,8 @@ void lab4()
 ////////////////////////////////////////////////////////////////
 void lab5()
 {
+	CPong pong(cv::Size(1000, 800), 3);
+	pong.run();
 }
 
 ////////////////////////////////////////////////////////////////
