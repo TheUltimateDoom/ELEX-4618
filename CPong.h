@@ -33,15 +33,16 @@ private:
 	int _lastBtnResetState;    ///< Previous state to detect a button press (falling edge)
 
 	// --- Multi-threading ---
-	//std::mutex _data_mutex; ///< Mutex to thread-safe shared variables
-	//bool _thread_exit;      ///< Flag to tell threads when to exit
+	bool _thread_exit;       ///< Flag to tell threads when to exit
+	std::mutex _data_mutex;  ///< Mutex to thread-safe shared variables
+
 
 	/**
 	 * @brief Static thread wrappers required by C++ to run class methods in threads
 	 */
-	//static void update_gpio_thread(CPong* ptr);
-	//static void update_logic_thread(CPong* ptr);
-	//static void draw_thread_wrapper(CPong* ptr);
+	static void gpio_thread(CPong* ptr);
+	static void update_thread(CPong* ptr);
+	static void draw_thread(CPong* ptr);
 
 public:
 	/**
@@ -52,7 +53,7 @@ public:
 	CPong(cv::Size size, int comPort);
 
 
-	//void run();
+	void run();
 
 	/**
 	 * @brief Reads hardware inputs from the microcontroller.

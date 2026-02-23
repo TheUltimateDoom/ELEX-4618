@@ -16,7 +16,7 @@ CPong::CPong(cv::Size size, int comPort)
 	_canvas = cv::Mat::zeros(size, CV_8UC3);
 
 	// Initialize CVUI for the GUI elements
-	cvui::init("Pong");
+	//cvui::init("Pong");
 
 	// Initialize Game State
 	_scorePlayer = 0;
@@ -53,12 +53,25 @@ CPong::CPong(cv::Size size, int comPort)
 
 void CPong::gpio()
 {
-	_joyY = _control.get_analog(JOY_Y);
-	_control.get_data(DIGITAL, S1, _btnResetRaw);
+	float temp_joyY = _control.get_analog(JOY_Y);
+	int temp_btnResetRaw;
+	_control.get_data(DIGITAL, S1, temp_btnResetRaw);
+
+	_data_mutex.lock();
+	_joyY = temp_joyY;
+	_btnResetRaw = temp_btnResetRaw;
+	_data_mutex.unlock();
+
+	//_joyY = _control.get_analog(JOY_Y);
+	//_control.get_data(DIGITAL, S1, _btnResetRaw);
+
+	
 }
 void CPong::update()
 {
-	auto end_time = std::chrono::system_clock::now() + std::chrono::milliseconds(33);
+	auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(33);
+
+	_data_mutex.lock();
 
 	// Detect falling edge (button was just pressed down)
 	if (_btnResetRaw == 0 && _lastBtnResetState == 1)
@@ -213,18 +226,25 @@ void CPong::update()
 		if (_computerPaddle.y > _canvas.rows - _computerPaddle.height) _computerPaddle.y = _canvas.rows - _computerPaddle.height;
 	}
 
+
+	_data_mutex.unlock();
+
 	std::this_thread::sleep_until(end_time);
 }
 
 void CPong::draw()
 {
+
+	_data_mutex.lock();
+
+
 	// 1. Clear the canvas
 	_canvas = cv::Mat::zeros(_canvas.size(), CV_8UC3);
 
 	// 2. Calculate FPS for the display 
-	double currentTick = cv::getTickCount();
-	_fps = cv::getTickFrequency() / (currentTick - _lastTick);
-	_lastTick = currentTick;
+	//double currentTick = cv::getTickCount();
+	//_fps = cv::getTickFrequency() / (currentTick - _lastTick);
+	//_lastTick = currentTick;
 
 	// 3. Draw the GUI Window Panel
 	// Format: cvui::window(canvas, x, y, width, height, "Title"); [cite: 322]
@@ -275,7 +295,76 @@ void CPong::draw()
 			cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 1);
 	}
 
+
 	// Update CVUI and Show Image 
 	cvui::update();
+
+	_data_mutex.unlock();
+
 	cv::imshow("Pong", _canvas);
+	cv::waitKey(1);
+}
+
+
+void CPong::gpio_thread(CPong* ptr)
+{
+	while (ptr->_thread_exit == false)
+	{
+		ptr->gpio();
+	}
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
+
+void CPong::update_thread(CPong* ptr)
+{
+	while (ptr->_thread_exit == false)
+	{
+		ptr->update();
+	}
+}
+
+void CPong::draw_thread(CPong* ptr)
+{
+	cvui::init("Pong");
+	while (ptr->_thread_exit == false)
+	{
+		ptr->draw();
+	}
+}
+
+#include <windows.h> // Required for MSG and PeekMessage
+
+void CPong::run()
+{
+	_thread_exit = false;
+
+	// Start threads [cite: 206]
+	std::thread t1(&CPong::gpio_thread, this);
+	std::thread t2(&CPong::update_thread, this);
+	std::thread t3(&CPong::draw_thread, this);
+
+	// Message Pump to keep Windows happy 
+	//MSG msg;
+	//while (_thread_exit == false)
+	//{
+	//	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	//	{
+	//		::TranslateMessage(&msg);
+	//		::DispatchMessage(&msg);
+	//	}
+	//	std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Prevent 100% CPU usage
+	//}
+	
+	MSG msg;
+	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	{
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
+	}
+
+	// Join threads safely [cite: 201]
+	t1.join();
+	t2.join();
+	t3.join();
 }
