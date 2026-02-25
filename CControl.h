@@ -14,7 +14,9 @@ enum { BUTTON_PRESS_SUCCESS = 0, BUTTON_PRESS_FAIL = 1, BUTTON_PRESS_NONE = 2};
 #define LED_GRN 38
 #define LED_RED 39
 #define JOY_Y 4
-#define JOY_X 11
+#define ACCEL_X 7
+#define ACCEL_Y 6
+#define ACCEL_Z 5
 
 /**
  * @class CControl
