@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <Windows.h>
 
 
 CPong::CPong(cv::Size size, int comPort)
@@ -15,39 +16,33 @@ CPong::CPong(cv::Size size, int comPort)
 	// Create the canvas
 	_canvas = cv::Mat::zeros(size, CV_8UC3);
 
-	// Initialize CVUI for the GUI elements
-	//cvui::init("Pong");
-
 	// Initialize Game State
-	_scorePlayer = 0;
-	_scoreComputer = 0;
-	_gameOver = false;
-	_resetPending = false;
+	_score_player = 0;
+	_score_computer = 0;
+	_game_over = false;
+	_reset_pending = false;
 
 	// Initialize Timing
-	_lastTick = cv::getTickCount();
+	_last_tick = cv::getTickCount();
 	_fps = 0.0;
+	_thread_exit = false;
 
 	// Initialize Hardware Data
 	_joyY = 50.0f;
-	_btnResetRaw = 1;
-	_lastBtnResetState = 1;
+	_button_reset = 1;
+	_button_reset_previous = 1;
 
-	// Initialize GUI Settings to Defaults
-	_ballRadius = 20;     // Default radius
-	_ballSpeedMag = 250;  // Default speed (pixels per second)
+	// Initialize ball properties
+	_ball_radius = 20;
+	_ball_velocity_magnitude = 250;
+	_ball_position = cv::Point2f(size.width / 2.0f, size.height / 2.0f);
+	_ball_velocity = cv::Point2f(_ball_velocity_magnitude * 0.707f, _ball_velocity_magnitude * 0.707f);
 
-	// Setup initial positions
-	_ballPos = cv::Point2f(size.width / 2.0f, size.height / 2.0f);
-
-	// Give the ball an initial direction (e.g., moving down-right)
-	_ballVelocity = cv::Point2f(_ballSpeedMag * 0.707f, _ballSpeedMag * 0.707f);
-
-	// Setup Paddles (Width, Height)
+	// Initialize paddles
 	int paddleW = 20;
 	int paddleH = 100;
-	_playerPaddle = cv::Rect(size.width - paddleW - 20, size.height / 2 - paddleH / 2, paddleW, paddleH);
-	_computerPaddle = cv::Rect(20, size.height / 2 - paddleH / 2, paddleW, paddleH);
+	_player_paddle = cv::Rect(size.width - paddleW - 20, size.height / 2 - paddleH / 2, paddleW, paddleH);
+	_computer_paddle = cv::Rect(20, size.height / 2 - paddleH / 2, paddleW, paddleH);
 }
 
 
@@ -59,177 +54,234 @@ void CPong::gpio()
 
 	_data_mutex.lock();
 	_joyY = temp_joyY;
-	_btnResetRaw = temp_btnResetRaw;
+	_button_reset = temp_btnResetRaw;
 	_data_mutex.unlock();
-
-	//_joyY = _control.get_analog(JOY_Y);
-	//_control.get_data(DIGITAL, S1, _btnResetRaw);
-
-	
 }
+
+
 void CPong::update()
 {
+
+	double start_tic, freq, elapsed_time;
+	freq = cv::getTickFrequency(); // Get tick frequency
+	start_tic = cv::getTickCount();
 	auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(33);
 
 	_data_mutex.lock();
 
+	// Handle pending reset after a score
+	if (_reset_pending == true)
+	{
+		// Put ball back in the middle
+		_ball_position = cv::Point2f(_canvas.cols / 2.0f, _canvas.rows / 2.0f);
+
+		//Randomize direction
+		float dirX = (rand() % 2 == 0) ? 1.0f : -1.0f;
+		float dirY = (rand() % 2 == 0) ? 1.0f : -1.0f;
+
+		// We use 0.707 (sin/cos of 45 degrees) to keep the speed consistent
+		_ball_velocity.x = dirX * (_ball_velocity_magnitude * 0.707f);
+		_ball_velocity.y = dirY * (_ball_velocity_magnitude * 0.707f);
+
+		// (Don't forget to include <cstdlib> at the top of your file for rand()!)
+
+		//_last_tick = cv::getTickCount();
+		_reset_pending = false;
+	}
+
 	// Detect falling edge (button was just pressed down)
-	if (_btnResetRaw == 0 && _lastBtnResetState == 1)
+	if (_button_reset == 0 && _button_reset_previous == 1)
 	{
 		// Triggers the ball to center
-		_resetPending = true;
+		_reset_pending = true;
 
 		// Resets scores and unfreezes the game
-		_scorePlayer = 0;
-		_scoreComputer = 0;
-		_gameOver = false;
+		_score_player = 0;
+		_score_computer = 0;
+		_game_over = false;
+		_ball_position = cv::Point2f(_canvas.cols / 2.0f, _canvas.rows / 2.0f);
 	}
 	// Store the current button state for the next frame to detect edges
-	_lastBtnResetState = _btnResetRaw;
+	_button_reset_previous = _button_reset;
 
 
 	// Check if either player has reached 5 points to end the game
-	if (_scorePlayer >= 5 || _scoreComputer >= 5)
+	if (_score_player >= 5 || _score_computer >= 5)
 	{
-		_gameOver = true;
-	}
-
-	// Handle pending reset after a score
-	if (_resetPending)
-	{
-		// Put ball back in the middle
-		_ballPos = cv::Point2f(_canvas.cols / 2.0f, _canvas.rows / 2.0f);
-
-		// Pick a new random direction
-		_ballVelocity = cv::Point2f(_ballSpeedMag * 0.707f, _ballSpeedMag * 0.707f);
-
-		_resetPending = false;
+		_game_over = true;
 	}
 
 
-	if (_gameOver == false)
+	if (_game_over == false && _reset_pending == false)
 	{
 		// Calculate dt
 		double currentTick = cv::getTickCount();
-		double dt = (currentTick - _lastTick) / cv::getTickFrequency();
-		_lastTick = currentTick;
+		double dt = (currentTick - _last_tick) / cv::getTickFrequency();
+		_last_tick = currentTick;
 
 		// Calculates FPS
-		if (dt > 0)
+		/*if (dt > 0.001)
 		{
 			_fps = 1.0 / dt;
-		}
+		}*/
 
-		float currentSpeed = std::sqrt((_ballVelocity.x * _ballVelocity.x) + (_ballVelocity.y * _ballVelocity.y));
+		float currentSpeed = std::sqrt((_ball_velocity.x * _ball_velocity.x) + (_ball_velocity.y * _ball_velocity.y));
 
 		if (currentSpeed > 0)
 		{
 			// Normalize the vector and multiply by the GUI trackbar value
-			_ballVelocity.x = (_ballVelocity.x / currentSpeed) * _ballSpeedMag;
-			_ballVelocity.y = (_ballVelocity.y / currentSpeed) * _ballSpeedMag;
+			_ball_velocity.x = (_ball_velocity.x / currentSpeed) * _ball_velocity_magnitude;
+			_ball_velocity.y = (_ball_velocity.y / currentSpeed) * _ball_velocity_magnitude;
 		}
 
 		// Move the Ball 
-		_ballPos.x += _ballVelocity.x * dt;
-		_ballPos.y += _ballVelocity.y * dt;
+		_ball_position.x += _ball_velocity.x * dt;
+		_ball_position.y += _ball_velocity.y * dt;
 
 		// Simple Wall Collision (Bounce off top and bottom) 
 
 		// Top Wall Bounce
-		if (_ballPos.y - _ballRadius < 0)
+		if (_ball_position.y - _ball_radius < 0)
 		{
-			_ballPos.y = _ballRadius;         // Snap to edge to prevent getting stuck
-			_ballVelocity.y = std::abs(_ballVelocity.y); // Force velocity downwards
+			_ball_position.y = _ball_radius;         // Snap to edge to prevent getting stuck
+			_ball_velocity.y = std::abs(_ball_velocity.y); // Force velocity downwards
 		}
 		// Bottom Wall Bounce
-		else if (_ballPos.y + _ballRadius > _canvas.rows)
+		else if (_ball_position.y + _ball_radius > _canvas.rows)
 		{
-			_ballPos.y = _canvas.rows - _ballRadius; // Snap to edge
-			_ballVelocity.y = -std::abs(_ballVelocity.y); // Force velocity upwards
+			_ball_position.y = _canvas.rows - _ball_radius; // Snap to edge
+			_ball_velocity.y = -std::abs(_ball_velocity.y); // Force velocity upwards
 		}
 
 		// --- SCORING (Left and Right Walls) ---
 		// Right Wall (Computer Scores)
-		if (_ballPos.x + _ballRadius > _canvas.cols)
+		if (_ball_position.x + _ball_radius > _canvas.cols)
 		{
-			_scoreComputer++;
-			_resetPending = true; // Flag for a reset
+			_score_computer++;
+			_reset_pending = true; // Flag for a reset
 		}
 		// Left Wall (Player Scores)
-		else if (_ballPos.x - _ballRadius < 0)
+		else if (_ball_position.x - _ball_radius < 0)
 		{
-			_scorePlayer++;
-			_resetPending = true; // Flag for a reset
+			_score_player++;
+			_reset_pending = true; // Flag for a reset
 		}
 
 		// PADDLE COLLISIONS ---
 
 		// Player Paddle Collision (Right side)
 		// 1. Check if the ball's bounding box overlaps the paddle's rectangle
-		if (_ballPos.x + _ballRadius >= _playerPaddle.x &&
-			_ballPos.x - _ballRadius <= _playerPaddle.x + _playerPaddle.width &&
-			_ballPos.y + _ballRadius >= _playerPaddle.y &&
-			_ballPos.y - _ballRadius <= _playerPaddle.y + _playerPaddle.height)
+		if (_ball_position.x + _ball_radius >= _player_paddle.x &&
+			_ball_position.x - _ball_radius <= _player_paddle.x + _player_paddle.width &&
+			_ball_position.y + _ball_radius >= _player_paddle.y &&
+			_ball_position.y - _ball_radius <= _player_paddle.y + _player_paddle.height)
 		{
 			// Snap ball to the edge of the paddle to prevent it from getting stuck inside
-			_ballPos.x = _playerPaddle.x - _ballRadius;
+			_ball_position.x = _player_paddle.x - _ball_radius;
 
 			// Calculate exactly where the ball hit the paddle (relative to the paddle's center)
-			float paddleCenterY = _playerPaddle.y + (_playerPaddle.height / 2.0f);
-			float relativeIntersectY = paddleCenterY - _ballPos.y;
+			float paddleCenterY = _player_paddle.y + (_player_paddle.height / 2.0f);
+			float relativeIntersectY = paddleCenterY - _ball_position.y;
 
 			// Normalize this value from -1.0 (bottom edge) to 1.0 (top edge)
-			float normalizedIntersectY = relativeIntersectY / (_playerPaddle.height / 2.0f);
+			float normalizedIntersectY = relativeIntersectY / (_player_paddle.height / 2.0f);
 
 			// Calculate the bounce angle (Max bounce angle is 45 degrees, which is ~0.785 radians)
 			float bounceAngle = normalizedIntersectY * 0.785f;
 
 			// Apply the new velocity using Trigonometry!
 			// X is negative because it's bouncing left, away from the player
-			_ballVelocity.x = -_ballSpeedMag * cos(bounceAngle);
+			_ball_velocity.x = -_ball_velocity_magnitude * cos(bounceAngle);
 
 			// Y is negative sine because OpenCV's Y-axis is inverted (0 is at the top)
-			_ballVelocity.y = _ballSpeedMag * -sin(bounceAngle);
+			_ball_velocity.y = _ball_velocity_magnitude * -sin(bounceAngle);
 		}
 
 		// Computer Paddle Collision (Left side)
-		if (_ballPos.x - _ballRadius <= _computerPaddle.x + _computerPaddle.width &&
-			_ballPos.x + _ballRadius >= _computerPaddle.x &&
-			_ballPos.y + _ballRadius >= _computerPaddle.y &&
-			_ballPos.y - _ballRadius <= _computerPaddle.y + _computerPaddle.height)
+		if (_ball_position.x - _ball_radius <= _computer_paddle.x + _computer_paddle.width &&
+			_ball_position.x + _ball_radius >= _computer_paddle.x &&
+			_ball_position.y + _ball_radius >= _computer_paddle.y &&
+			_ball_position.y - _ball_radius <= _computer_paddle.y + _computer_paddle.height)
 		{
 			// Snap ball to the edge of the paddle
-			_ballPos.x = _computerPaddle.x + _computerPaddle.width + _ballRadius;
+			_ball_position.x = _computer_paddle.x + _computer_paddle.width + _ball_radius;
 
-			float paddleCenterY = _computerPaddle.y + (_computerPaddle.height / 2.0f);
-			float relativeIntersectY = paddleCenterY - _ballPos.y;
+			float paddleCenterY = _computer_paddle.y + (_computer_paddle.height / 2.0f);
+			float relativeIntersectY = paddleCenterY - _ball_position.y;
 
-			float normalizedIntersectY = relativeIntersectY / (_computerPaddle.height / 2.0f);
+			float normalizedIntersectY = relativeIntersectY / (_computer_paddle.height / 2.0f);
 			float bounceAngle = normalizedIntersectY * 0.785f;
 
 			// X is positive because it's bouncing right, away from the computer
-			_ballVelocity.x = _ballSpeedMag * cos(bounceAngle);
-			_ballVelocity.y = _ballSpeedMag * -sin(bounceAngle);
+			_ball_velocity.x = _ball_velocity_magnitude * cos(bounceAngle);
+			_ball_velocity.y = _ball_velocity_magnitude * -sin(bounceAngle);
 		}
 
 		// 5. Update Paddles
 		// Player Paddle: Map the 0-100 joystick percentage to the screen height
-		_playerPaddle.y = (_joyY / 100.0f) * (_canvas.rows - _playerPaddle.height);
+		//_player_paddle.y = (_joyY / 100.0f) * (_canvas.rows - _player_paddle.height);
+		_player_paddle.y = ((100.0f - _joyY) / 100.0f) * (_canvas.rows - _player_paddle.height);
 
 		// Computer Paddle: A simple AI that perfectly tracks the ball's Y position
-		_computerPaddle.y = _ballPos.y - (_computerPaddle.height / 2);
+		//_computer_paddle.y = _ball_position.y - (_computer_paddle.height / 2);
+
+		// NEW: Move towards the ball at a limited speed
+		// Calculate where we want to be
+		float targetY = _ball_position.y - (_computer_paddle.height / 2);
+		float computerSpeed = 5.0f; // or whatever speed you chose
+
+		// Get the distance to the target
+		float distance = targetY - _computer_paddle.y;
+
+		// If the distance is smaller than our speed, just snap to it (stops the jitter!)
+		if (std::abs(distance) < computerSpeed)
+		{
+			_computer_paddle.y = targetY;
+		}
+		else
+		{
+			// Otherwise, move normally
+			if (_computer_paddle.y < targetY)
+			{
+				_computer_paddle.y += computerSpeed;
+			}
+			else if (_computer_paddle.y > targetY)
+			{
+				_computer_paddle.y -= computerSpeed;
+			}
+		}
 
 		// Clamp paddles to screen so they don't disappear
-		if (_playerPaddle.y < 0) _playerPaddle.y = 0;
-		if (_playerPaddle.y > _canvas.rows - _playerPaddle.height) _playerPaddle.y = _canvas.rows - _playerPaddle.height;
-		if (_computerPaddle.y < 0) _computerPaddle.y = 0;
-		if (_computerPaddle.y > _canvas.rows - _computerPaddle.height) _computerPaddle.y = _canvas.rows - _computerPaddle.height;
+		if (_player_paddle.y < 0)
+		{
+			_player_paddle.y = 0;
+		}
+
+		if (_player_paddle.y > _canvas.rows - _player_paddle.height)
+		{
+			_player_paddle.y = _canvas.rows - _player_paddle.height;
+		}
+
+		if (_computer_paddle.y < 0)
+		{
+			_computer_paddle.y = 0;
+		}
+
+		if (_computer_paddle.y > _canvas.rows - _computer_paddle.height)
+		{
+			_computer_paddle.y = _canvas.rows - _computer_paddle.height;
+		}
 	}
 
-
 	_data_mutex.unlock();
-
 	std::this_thread::sleep_until(end_time);
+
+	double frame_end = cv::getTickCount();
+	double frame_time = (frame_end - start_tic) / freq;
+	std::cout << "Frame Time: " << frame_time * 1000 << " ms" << std::endl;
+
+	if (frame_time > 0.0001)
+		_fps = 1.0 / frame_time;
 }
 
 void CPong::draw()
@@ -237,14 +289,8 @@ void CPong::draw()
 
 	_data_mutex.lock();
 
-
 	// 1. Clear the canvas
 	_canvas = cv::Mat::zeros(_canvas.size(), CV_8UC3);
-
-	// 2. Calculate FPS for the display 
-	//double currentTick = cv::getTickCount();
-	//_fps = cv::getTickFrequency() / (currentTick - _lastTick);
-	//_lastTick = currentTick;
 
 	// 3. Draw the GUI Window Panel
 	// Format: cvui::window(canvas, x, y, width, height, "Title"); [cite: 322]
@@ -252,55 +298,48 @@ void CPong::draw()
 	cvui::window(_canvas, 10, 10, 220, 250, windowTitle);
 
 	// --- ADD THIS: The Score Display ---
-	std::string scoreText = "Player: " + std::to_string(_scorePlayer) + "   Computer: " + std::to_string(_scoreComputer);
+	std::string scoreText = "Player: " + std::to_string(_score_player) + "   Computer: " + std::to_string(_score_computer);
 	cvui::text(_canvas, 20, 40, scoreText);
 	// (Make sure to shift your trackbar Y-coordinates down a bit so they don't overlap the text!)
 
 	// 4. Ball Radius Trackbar (5 to 100) 
 	cvui::text(_canvas, 25, 70, "Ball Radius");
-	cvui::trackbar(_canvas, 15, 80, 180, &_ballRadius, 5, 100);
+	cvui::trackbar(_canvas, 15, 80, 180, &_ball_radius, 5, 100);
 
 	// 5. Ball Speed Trackbar (100 to 400) 
 	cvui::text(_canvas, 25, 140, "Ball Speed");
-	cvui::trackbar(_canvas, 15, 160, 180, &_ballSpeedMag, 100, 400);
+	cvui::trackbar(_canvas, 15, 160, 180, &_ball_velocity_magnitude, 100, 400);
 
-	// 6. Reset and Exit Buttons 
+	// Reset button
 	if (cvui::button(_canvas, 20, 220, "Reset"))
 	{
-		_resetPending = true;
-		_scoreComputer = 0;
-		_scorePlayer = 0;
-		_gameOver = false;
+		_reset_pending = true;
+		_score_computer = 0;
+		_score_player = 0;
+		_ball_position = cv::Point2f(_canvas.cols / 2.0f, _canvas.rows / 2.0f);
+		_game_over = false;
+		_last_tick = cv::getTickCount();
 	}
 
-	// --- DRAW GAME OBJECTS ---
-	// Draw the Ball (using the GUI trackbar radius)
-	cv::circle(_canvas, _ballPos, _ballRadius, cv::Scalar(255, 255, 255), -1);
-
-	// Draw Player Paddle (Right)
-	cv::rectangle(_canvas, _playerPaddle, cv::Scalar(200, 200, 200), -1);
-
-	// Draw Computer Paddle (Left)
-	cv::rectangle(_canvas, _computerPaddle, cv::Scalar(200, 200, 200), -1);
-
-	// --- ADD THIS: Game Over Text ---
-	if (_gameOver == true)
+	if (_game_over == false) // Draw game objects
 	{
-		std::string winnerText = (_scorePlayer >= 5) ? "PLAYER WINS!" : "COMPUTER WINS!";
+		cv::circle(_canvas, _ball_position, _ball_radius, cv::Scalar(255, 255, 255), -1);
+		cv::rectangle(_canvas, _player_paddle, cv::Scalar(200, 200, 200), -1);
+		cv::rectangle(_canvas, _computer_paddle, cv::Scalar(200, 200, 200), -1);
+	}
+	
+	if (_game_over == true) // Display Winner Text
+	{
+		std::string winnerText = (_score_player >= 5) ? "PLAYER WINS!" : "COMPUTER WINS!";
 
-		// Draw huge text in the middle of the screen
-		cv::putText(_canvas, winnerText, cv::Point(_canvas.cols / 2 - 150, _canvas.rows / 2 - 50),
+		cv::putText(_canvas, winnerText, cv::Point(_canvas.cols / 2 - 170, _canvas.rows / 2 - 50),
 			cv::FONT_HERSHEY_SIMPLEX, 1.5, cv::Scalar(0, 255, 0), 3);
-		cv::putText(_canvas, "Press Reset in GUI to play again", cv::Point(_canvas.cols / 2 - 170, _canvas.rows / 2 + 20),
+		cv::putText(_canvas, "Press Reset in GUI to play again", cv::Point(_canvas.cols / 2 - 170, _canvas.rows / 2 + 30),
 			cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 1);
 	}
 
-
-	// Update CVUI and Show Image 
 	cvui::update();
-
 	_data_mutex.unlock();
-
 	cv::imshow("Pong", _canvas);
 	cv::waitKey(1);
 }
@@ -333,29 +372,15 @@ void CPong::draw_thread(CPong* ptr)
 	}
 }
 
-#include <windows.h> // Required for MSG and PeekMessage
 
 void CPong::run()
 {
 	_thread_exit = false;
 
-	// Start threads [cite: 206]
 	std::thread t1(&CPong::gpio_thread, this);
 	std::thread t2(&CPong::update_thread, this);
 	std::thread t3(&CPong::draw_thread, this);
 
-	// Message Pump to keep Windows happy 
-	//MSG msg;
-	//while (_thread_exit == false)
-	//{
-	//	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-	//	{
-	//		::TranslateMessage(&msg);
-	//		::DispatchMessage(&msg);
-	//	}
-	//	std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Prevent 100% CPU usage
-	//}
-	
 	MSG msg;
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
@@ -363,7 +388,6 @@ void CPong::run()
 		::DispatchMessage(&msg);
 	}
 
-	// Join threads safely [cite: 201]
 	t1.join();
 	t2.join();
 	t3.join();

@@ -13,6 +13,7 @@ enum { BUTTON_PRESS_SUCCESS = 0, BUTTON_PRESS_FAIL = 1, BUTTON_PRESS_NONE = 2};
 #define LED_BLU 37
 #define LED_GRN 38
 #define LED_RED 39
+#define JOY_X 11
 #define JOY_Y 4
 #define ACCEL_X 7
 #define ACCEL_Y 6
@@ -29,7 +30,8 @@ class CControl
 {
 private:
     Serial _com; ///< Serial port object for communication
-
+   // std::map<int, int> _min_values; // Store min seen per channel
+   // std::map<int, int> _max_values; // Store max seen per channel
 public:
     /** @brief Constructor */
     CControl();

@@ -10,38 +10,45 @@ class CPong : public CBase4618
 {
 private:
 	// --- Game Objects ---
-	cv::Point2f _ballPos;      ///< Current (x,y) position of the ball
-	cv::Point2f _ballVelocity; ///< Current X and Y velocity of the ball in pixels/sec
-	int _ballRadius;           ///< Radius of the ball (adjustable via GUI 5-100)
-	int _ballSpeedMag;         ///< Base speed magnitude (adjustable via GUI 100-400)
-	cv::Rect _playerPaddle;    ///< Player paddle (controlled by joystick)
-	cv::Rect _computerPaddle;  ///< Computer paddle (auto-controlled)
+	cv::Point2f _ball_position;   ///< Current (x,y) position of the ball
+	cv::Point2f _ball_velocity;   ///< Current X and Y velocity of the ball in pixels/sec
+	int _ball_radius;             ///< Radius of the ball (adjustable via GUI 5-100)
+	int _ball_velocity_magnitude; ///< Base speed (adjustable via GUI 100-400)
+	cv::Rect _player_paddle;      ///< Player paddle (controlled by joystick)
+	cv::Rect _computer_paddle;    ///< Computer paddle (auto-controlled)
 
 	// --- Game State ---
-	int _scorePlayer;          ///< Player's current score
-	int _scoreComputer;        ///< Computer's current score
-	bool _gameOver;            ///< Flag to end the game (player/computer has scored 5 or reset button was pressed)
-	bool _resetPending;        ///< Flag to trigger a game reset
+	int _score_player;            ///< Player's current score
+	int _score_computer;          ///< Computer's current score
+	bool _game_over;              ///< Flag to end the game (player/computer has scored 5 or reset button was pressed)
+	bool _reset_pending;          ///< Flag to trigger a game reset
 
 	// --- Timing & Physics ---
-	double _lastTick;          ///< OpenCV tick count from the previous frame for delta time
-	double _fps;               ///< Calculated FPS
+	double _last_tick;            ///< OpenCV tick count from the previous frame for delta time
+	double _fps;                  ///< Calculated FPS
 
 	// --- Hardware Data ---
-	float _joyY;               ///< Joystick Y-axis percentage (0-100)
-	int _btnResetRaw;          ///< Raw digital state of the physical reset button
-	int _lastBtnResetState;    ///< Previous state to detect a button press (falling edge)
+	float _joyY;                  ///< Joystick Y-axis percentage (0-100)
+	int _button_reset;            ///< Raw digital state of the physical reset button
+	int _button_reset_previous;   ///< Previous state to detect a button press (falling edge)
 
 	// --- Multi-threading ---
-	bool _thread_exit;       ///< Flag to tell threads when to exit
-	std::mutex _data_mutex;  ///< Mutex to thread-safe shared variables
-
+	bool _thread_exit;            ///< Flag to tell threads when to exit
+	std::mutex _data_mutex;       ///< Mutex to thread-safe shared variables
 
 	/**
-	 * @brief Static thread wrappers required by C++ to run class methods in threads
+	 * @brief Static thread wrapper required by C++ to run class methods in threads
 	 */
 	static void gpio_thread(CPong* ptr);
+
+	/**
+	 * @brief Static thread wrapper required by C++ to run class methods in threads
+	 */
 	static void update_thread(CPong* ptr);
+
+	/**
+	 * @brief Static thread wrapper required by C++ to run class methods in threads
+	 */
 	static void draw_thread(CPong* ptr);
 
 public:
@@ -52,13 +59,17 @@ public:
 	 */
 	CPong(cv::Size size, int comPort);
 
-
+	/**
+	 * @brief Runs the game.
+	 * Calls gpio, update, and draw in a loop until the user presses 'q' or the game ends.
+	 * It also manages thread creation and cleanup for the gpio, update, and draw methods.
+	 */
 	void run();
 
 	/**
 	 * @brief Reads hardware inputs from the microcontroller.
 	 * In particular, it reads analog vertical joystick, and the S1 pushbutton.
-]	 */
+	 */
 	virtual void gpio() override;
 
 	/**

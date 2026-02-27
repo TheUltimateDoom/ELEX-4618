@@ -45,15 +45,13 @@ void CSketch::gpio()
     _control.get_data(DIGITAL, BTN_COLOR_CH, _btnColorRaw);
     _control.get_data(DIGITAL, BTN_RESET_CH, _btnResetRaw);
 
-    //  OUTPUTS: Update LEDs based on Game State (_colorIndex)
-    // We calculate logic in update(), but we WRITE to hardware here.
+    // Update LEDs based on Game State
     _control.set_data(DIGITAL, LED_RED, (_colorIndex == 0) ? 1 : 0);
     _control.set_data(DIGITAL, LED_GRN, (_colorIndex == 1) ? 1 : 0);
     _control.set_data(DIGITAL, LED_BLU, (_colorIndex == 2) ? 1 : 0);
 
-    // Read Accelerometer
-    // We assume get_analog handles the 0-4095 conversion
-    _prevAccelX = _accelX; // Save previous frame for comparison
+    // Read Accelerometer, save previous frame for comparison
+    _prevAccelX = _accelX;
     _prevAccelY = _accelY;
     _prevAccelZ = _accelZ;
 
@@ -65,17 +63,22 @@ void CSketch::gpio()
 void CSketch::update()
 {
 
-    std::cout << "RawX: " << std::fixed << std::setprecision(1) << _dataX
+    /*std::cout << "RawX: " << std::fixed << std::setprecision(1) << _dataX
         << " | RawY: " << _dataY
         << " | ScreenPos: [" << _currentPos.x << "," << _currentPos.y << "]"
-        << "          \r";
+        << "          \n";*/
+    
+    /*std::cout << "accelX: " << std::fixed << std::setprecision(1) << _accelX
+        << " | accelY: " << _accelY
+        << " | accelZ: " << _accelZ
+		<< "          \n";*/
 
-    // --- 1. SETUP CONSTANTS (Matched to 0-100 Input) ---
-    float deadzoneMin = 45.0f; // 45%
-    float deadzoneMax = 50.0f; // 55%
-    float maxSpeed = 8.0f;     // Pixels per frame
+    // SETUP CONSTANTS
+    float deadzoneMin = 45.0f;
+    float deadzoneMax = 50.0f;
+    float maxSpeed = 20.0f;     // Pixels per frame
 
-    // --- 2. X MOVEMENT ---
+    // X MOVEMENT
     if (_dataX < deadzoneMin) // Move Left
     {
         // Map 45->0 to 0->MaxSpeed
@@ -84,12 +87,11 @@ void CSketch::update()
     }
     else if (_dataX > deadzoneMax) // Move Right
     {
-        // Map 55->100 to 0->MaxSpeed
         float ratio = (_dataX - deadzoneMax) / (100.0f - deadzoneMax);
         _currentPos.x += (int)(ratio * maxSpeed);
     }
 
-    // --- 3. Y MOVEMENT ---
+    // Y MOVEMENT
     if (_dataY < deadzoneMin) // Move Down (Positive Y)
     {
         float ratio = (deadzoneMin - _dataY) / deadzoneMin;
@@ -114,16 +116,12 @@ void CSketch::update()
 
 
     // --- 2. SHAKE DETECTION (Stretch Goal) ---
-    //[cite: 146]: "reset when you shake the controller (accelerometer)"
-
     // Calculate Delta (Change in acceleration)
     float deltaX = std::abs(_accelX - _prevAccelX);
     float deltaY = std::abs(_accelY - _prevAccelY);
-    // float deltaZ = std::abs(_accelZ - _prevAccelZ); // Optional
+    // float deltaZ = std::abs(_accelZ - _prevAccelZ);
 
-    // Define Sensitivity Threshold (Trial and error usually needed)
-    // If your get_analog returns 0-100, a change of 10-15 is usually a hard shake.
-    float shakeThreshold = 15.0f;
+    float shakeThreshold = 20.0f;
 
     if (deltaX > shakeThreshold || deltaY > shakeThreshold)
     {
@@ -131,8 +129,8 @@ void CSketch::update()
         _resetPending = true;
     }
 
-    // --- 2. BUTTON DEBOUNCE LOGIC ---
-    // Handle Color Button (Debounce logic moved here since we can't use CControl's internal timer easily)
+    // BUTTON DEBOUNCE LOGIC
+    // Handle Color Button
     double currentTime = cv::getTickCount() / cv::getTickFrequency();
 
     // Detect Falling Edge (Transition from 1 to 0) + Timeout

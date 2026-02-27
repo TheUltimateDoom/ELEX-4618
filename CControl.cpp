@@ -35,7 +35,7 @@ bool CControl::get_data(int type, int channel, int& result)
 	int attempts = 0;
 
 	// Wait for data to arrive
-	while (bytesRead <= 0 && attempts < 50)
+	while (bytesRead <= 0 && attempts < 10)
 	{
 		bytesRead = _com.read(buffer, 99);
 		attempts++;

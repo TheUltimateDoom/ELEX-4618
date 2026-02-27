@@ -10,6 +10,7 @@
     </ClCompile>
     <ClCompile Include="CBase4618.cpp" />
     <ClCompile Include="CSketch.cpp" />
+    <ClCompile Include="CPong.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cvui.h" />
@@ -21,6 +22,7 @@
     </ClInclude>
     <ClInclude Include="CBase4618.h" />
     <ClInclude Include="CSketch.h" />
+    <ClInclude Include="CPong.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Lab 3">
