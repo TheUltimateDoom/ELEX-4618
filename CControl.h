@@ -7,7 +7,6 @@
 enum { DIGITAL = 0, ANALOG, SERVO };
 enum { BUTTON_PRESS_SUCCESS = 0, BUTTON_PRESS_FAIL = 1, BUTTON_PRESS_NONE = 2};
 
-
 #define S1 33
 #define S2 32
 #define LED_BLU 37
@@ -29,9 +28,8 @@ enum { BUTTON_PRESS_SUCCESS = 0, BUTTON_PRESS_FAIL = 1, BUTTON_PRESS_NONE = 2};
 class CControl
 {
 private:
-    Serial _com; ///< Serial port object for communication
-   // std::map<int, int> _min_values; // Store min seen per channel
-   // std::map<int, int> _max_values; // Store max seen per channel
+    Serial* _com; ///< Serial port object for communication
+	int _saved_port = -1; ///< Stores the COM port number for auto-detection
 public:
     /** @brief Constructor */
     CControl();
@@ -83,4 +81,12 @@ public:
      * @return true if the microcontroller was able to connect, false otherwise.
      */
     bool auto_init();
+
+
+    /**
+     * @brief Helper to attempt reconnection if the serial connection is lost.
+     * @param void
+     * @return true if reconnection was successful, false otherwise.
+	 */
+    bool reconnect();
 };

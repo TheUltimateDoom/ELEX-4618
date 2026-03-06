@@ -2,22 +2,20 @@
 #include "CControl.h"
 #include <chrono>
 
-
-// Constructors
 CControl::CControl()
 {
+	_com = new Serial();
 }
 
 CControl::~CControl()
 {
+	delete _com;
 }
-
-
 
 void CControl::init_com(int comport)
 {
     std::string portName = "COM" + std::to_string(comport);
-    if (_com.open(portName, 115200)) 
+    if (_com->open(portName, 115200)) 
     {
         std::cout << "Connected to " << portName << " at 115200 baud rate." << std::endl;
     }
@@ -26,20 +24,20 @@ void CControl::init_com(int comport)
 bool CControl::get_data(int type, int channel, int& result)
 {
 	std::string command = "G " + std::to_string(type) + " " + std::to_string(channel) + "\n";
-	_com.flush();
-	_com.write(command.c_str(), command.length());
+	_com->flush();
+	_com->write(command.c_str(), command.length());
 
 	char buffer[100];
 	int totalBytes = 0;
 
-	// Start the timeout clock (giving it a generous 10ms max)
+	// Start the timeout clock (10 ms max)
 	auto start_wait = std::chrono::steady_clock::now();
 
 	// Keep looping until the buffer is full OR we break out
 	while (totalBytes < 99)
 	{
 		// Read whatever is currently waiting in the serial port
-		int bytesRead = _com.read(buffer + totalBytes, 99 - totalBytes);
+		int bytesRead = _com->read(buffer + totalBytes, 99 - totalBytes);
 
 		if (bytesRead > 0)
 		{
@@ -49,10 +47,9 @@ bool CControl::get_data(int type, int channel, int& result)
 			// Check if the microcontroller sent the newline character yet
 			if (strchr(buffer, '\n') != NULL)
 			{
-				break; // The complete message has arrived!
+				break; // Message is complete, exit the loop to parse it
 			}
 		}
-
 		// Timeout check: If 10ms pass and we still don't have a full message, bail out
 		if (std::chrono::steady_clock::now() - start_wait > std::chrono::milliseconds(10))
 		{
@@ -60,7 +57,7 @@ bool CControl::get_data(int type, int channel, int& result)
 		}
 	}
 
-	// Now we parse the completed string
+	// Parse the completed string
 	if (totalBytes > 0)
 	{
 		char* startPtr = strchr(buffer, 'A');
@@ -81,13 +78,13 @@ bool CControl::get_data(int type, int channel, int& result)
 bool CControl::set_data(int type, int channel, int val)
 {
 	std::string command = "S " + std::to_string(type) + " " + std::to_string(channel) + " " + std::to_string(val) + "\n";
-	return (_com.write(command.c_str(), command.length()) > 0);
+	return (_com->write(command.c_str(), command.length()) > 0);
 }
 
 float CControl::get_analog(int channel)
 {
 	int result = 0;
-	// Call get_data to get the raw integer value (0-4095)
+
 	if (get_data(ANALOG, channel, result))
 	{
 		// Return the percentage of the 12-bit ADC full scale
@@ -106,16 +103,15 @@ int CControl::get_button(int channel)
 	static DWORD lastPressTime = 0;
 	static int lastState = 1;
 
-	// 1. Get the current physical state of the button
-	if (get_data(DIGITAL, channel, currentState))
+	if (get_data(DIGITAL, channel, currentState) == true)
 	{
 		DWORD currentTime = GetTickCount();
 		int result = BUTTON_PRESS_NONE; // Default result
 
-		// Check for a "Falling Edge" (Transition from 1 to 0)
+		// Check for falling edge
 		if (currentState == 0 && lastState == 1)
 		{
-			// Only count it if 1000ms has passed
+			// 1 s debounce
 			if (currentTime - lastPressTime > 1000)
 			{
 				lastPressTime = currentTime;
@@ -123,7 +119,7 @@ int CControl::get_button(int channel)
 			}
 		}
 
-		lastState = currentState; // Always update lastState if comms worked
+		lastState = currentState;
 		return result;
 	}
 
@@ -138,21 +134,53 @@ bool CControl::auto_init()
 	{
 		std::string portName = "COM" + std::to_string(i);
 
-		if (_com.open(portName, 115200))
+		// 1. Try to open the port
+		if (_com->open(portName, 115200) == true)
 		{
-			_com.flush();
+			_com->flush();
 
-			// 2. Try probing 3 times before deciding this port is "wrong"
+			// Try probing 3 times before deciding this port is "wrong"
 			for (int retry = 0; retry < 3; retry++)
 			{
 				int result = 0;
-				if (get_data(DIGITAL, S1, result)) // Try reading S1
+				if (get_data(DIGITAL, S1, result))
 				{
 					std::cout << "\nSuccess! Board found on " << portName << std::endl;
-					return true;
+					_saved_port = i; // Saved for reconnect() function!
+					return true;     // Exit immediately, keeping the connection open
 				}
-				Sleep(100);
+				Sleep(10);
 			}
+
+			// If we get here, the port opened but the Tiva C wasn't there.
+			// Close this ghost connection before checking the next port.
+			delete _com;
+			_com = new Serial();
+		}
+	}
+	return false;
+}
+
+bool CControl::reconnect()
+{
+	if (_saved_port == -1)
+	{
+		return false;
+	}
+	// This triggers the ~Serial() destructor, cleanly closing the broken Windows handle!
+	delete _com;
+	_com = new Serial(); // Create a fresh, empty Serial object
+
+	std::string portName = "COM" + std::to_string(_saved_port);
+
+	// Try to open the saved port
+	if (_com->open(portName, 115200))
+	{
+		int result = 0;
+		// Do one quick ping to see if the Tiva C is actually on the other end
+		if (get_data(DIGITAL, S1, result))
+		{
+			return true;
 		}
 	}
 	return false;
