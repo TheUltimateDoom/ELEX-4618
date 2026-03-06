@@ -23,7 +23,6 @@ void CControl::init_com(int comport)
     }
 }
 
-
 bool CControl::get_data(int type, int channel, int& result)
 {
 	std::string command = "G " + std::to_string(type) + " " + std::to_string(channel) + "\n";
@@ -31,28 +30,44 @@ bool CControl::get_data(int type, int channel, int& result)
 	_com.write(command.c_str(), command.length());
 
 	char buffer[100];
-	int bytesRead = 0;
-	int attempts = 0;
+	int totalBytes = 0;
 
-	// Wait for data to arrive
-	while (bytesRead <= 0 && attempts < 10)
+	// Start the timeout clock (giving it a generous 10ms max)
+	auto start_wait = std::chrono::steady_clock::now();
+
+	// Keep looping until the buffer is full OR we break out
+	while (totalBytes < 99)
 	{
-		bytesRead = _com.read(buffer, 99);
-		attempts++;
-		Sleep(1);
+		// Read whatever is currently waiting in the serial port
+		int bytesRead = _com.read(buffer + totalBytes, 99 - totalBytes);
+
+		if (bytesRead > 0)
+		{
+			totalBytes += bytesRead;
+			buffer[totalBytes] = '\0'; // Cap it off as a valid string
+
+			// Check if the microcontroller sent the newline character yet
+			if (strchr(buffer, '\n') != NULL)
+			{
+				break; // The complete message has arrived!
+			}
+		}
+
+		// Timeout check: If 10ms pass and we still don't have a full message, bail out
+		if (std::chrono::steady_clock::now() - start_wait > std::chrono::milliseconds(10))
+		{
+			break;
+		}
 	}
 
-	if (bytesRead > 0)
+	// Now we parse the completed string
+	if (totalBytes > 0)
 	{
-		buffer[bytesRead] = '\0';
-
-		// CRITICAL FIX: Look for 'A' anywhere in the buffer
 		char* startPtr = strchr(buffer, 'A');
 
-		if (startPtr != NULL) // We found an 'A'!
+		if (startPtr != NULL)
 		{
 			int resType, resChannel, resValue;
-			// Parse starting from the 'A' position, skipping the character itself
 			if (sscanf_s(startPtr, "A %d %d %d", &resType, &resChannel, &resValue) == 3)
 			{
 				result = resValue;
